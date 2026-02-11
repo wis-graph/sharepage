@@ -44,12 +44,7 @@ export async function navigate(hash) {
         html = renderMath(html);
         html = convertInternalLinks(html);
 
-        const backLink = '<a href="#/" class="back-button">← Back to Dashboard</a>';
-
-        document.getElementById('app').innerHTML = `
-          ${backLink}
-          <div class="document-container markdown">${html}</div>
-        `;
+        document.getElementById('app').innerHTML = `<div class="document-container markdown">${html}</div>`;
 
         await mermaid.run({
           nodes: document.querySelectorAll('.mermaid')

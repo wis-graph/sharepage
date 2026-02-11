@@ -1029,23 +1029,6 @@
         }
       }
     }
-      } else if (hash === '/') {
-        document.getElementById('app').innerHTML = '<div class="loading">Loading dashboard...</div>';
-        document.title = 'Dashboard - ShareHub';
-
-        console.log('[Router] Loading dashboard');
-
-        if (allNotes.length === 0) {
-          await loadDashboardNotes();
-        }
-
-        const html = renderDashboardPage(currentPage);
-        document.getElementById('app').innerHTML = html;
-      } else {
-        console.log('[Router] Route not found:', hash);
-        document.getElementById('app').innerHTML = '<h1>404 Not Found</h1><p>The route "' + hash + '" does not exist.</p>';
-      }
-    }
 
     function handleHashChange() {
       const hash = window.location.hash.slice(1) || '/';

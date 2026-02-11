@@ -3,7 +3,7 @@ import { applySyntaxHighlighting, renderMermaidDiagrams, renderMath } from './re
 import { loadDashboardNotes, renderDashboardPage } from './dashboard.js';
 
 function removeFrontmatter(markdown) {
-  return markdown.replace(/^---\n[\s\S]*?\n---\n/, '');
+  return markdown.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, '');
 }
 
 export async function navigate(hash) {

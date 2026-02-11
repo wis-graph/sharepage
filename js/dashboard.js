@@ -6,16 +6,18 @@ let allNotes = [];
 function extractDashboardLinks(dashboardContent) {
   console.log('[Dashboard] Extracting links from dashboard...');
 
-  const links = [];
+  const linkSet = new Set();
   const linkMatches = dashboardContent.matchAll(/\[\[([^\]]+)\]\]/g);
 
   for (const match of linkMatches) {
     const linkText = match[1];
     const cleanLink = linkText.replace(/\.md$/, '').trim();
-    links.push(cleanLink);
+    linkSet.add(cleanLink);
+    console.log('[Dashboard] Found link:', cleanLink);
   }
 
-  console.log('[Dashboard] Found', links.length, 'links in dashboard');
+  const links = Array.from(linkSet);
+  console.log('[Dashboard] Total unique links:', links.length, '→', links);
   return links;
 }
 
@@ -73,18 +75,28 @@ function extractFirstImage(markdown) {
 }
 
 export async function loadDashboardNotes() {
-  console.log('[Dashboard] Loading dashboard notes...');
+  console.log('[Dashboard] ===== Loading dashboard notes START =====');
 
   try {
+    console.log('[Dashboard] Fetching _home.md...');
     const dashboardContent = await fetchFile('_home.md');
+    console.log('[Dashboard] _home.md length:', dashboardContent.length);
+
     const links = extractDashboardLinks(dashboardContent);
+    console.log('[Dashboard] Links to process:', links);
 
     allNotes = [];
 
     for (const link of links) {
+      console.log('[Dashboard] Processing link:', link);
+
       const route = Object.entries(routes).find(([path, route]) => {
         const filenameWithoutExt = route.file.replace(/\.md$/, '');
-        return filenameWithoutExt === link || path === '/' + link;
+        const match = filenameWithoutExt === link || path === '/' + link;
+        if (match) {
+          console.log('[Dashboard] Matched route:', path, '→', route.file);
+        }
+        return match;
       });
 
       if (route) {
@@ -96,19 +108,26 @@ export async function loadDashboardNotes() {
         };
 
         try {
+          console.log('[Dashboard] Fetching note content:', note.file);
           const content = await fetchFile(note.file);
+          console.log('[Dashboard] Note content length:', content.length);
+
           const metadata = extractMetadata(content, note.file);
           note.title = metadata.title;
           note.description = metadata.description;
+          console.log('[Dashboard] Note metadata:', metadata);
 
           if (metadata.thumbnail) {
             note.thumbnail = getRawUrl('_image_' + metadata.thumbnail);
+            console.log('[Dashboard] Using thumbnail from frontmatter:', note.thumbnail);
           } else {
             const firstImage = extractFirstImage(content);
             note.thumbnail = firstImage;
+            console.log('[Dashboard] Using first image:', note.thumbnail || 'None');
           }
 
           allNotes.push(note);
+          console.log('[Dashboard] Added note to list:', note.title);
         } catch (error) {
           console.error('[Dashboard] Error loading note:', note.file, error);
         }
@@ -118,18 +137,32 @@ export async function loadDashboardNotes() {
     }
 
     allNotes.sort((a, b) => a.title.localeCompare(b.title));
-    console.log('[Dashboard] Loaded', allNotes.length, 'notes');
+    console.log('[Dashboard] ===== Loading dashboard notes END =====');
+    console.log('[Dashboard] Total notes loaded:', allNotes.length);
+    console.log('[Dashboard] Notes:', allNotes.map(n => n.title));
   } catch (error) {
-    console.error('[Dashboard] Error loading dashboard:', error);
+    console.error('[Dashboard] ===== Error loading dashboard =====');
+    console.error('[Dashboard] Error details:', error);
     allNotes = [];
   }
 }
 
 export function renderDashboardPage(page) {
+  console.log('[Dashboard] ===== Rendering dashboard page', page, 'START =====');
+
   const startIndex = (page - 1) * PAGINATION_ITEMS_PER_PAGE;
   const endIndex = startIndex + PAGINATION_ITEMS_PER_PAGE;
   const notesToShow = allNotes.slice(startIndex, endIndex);
   const totalPages = Math.ceil(allNotes.length / PAGINATION_ITEMS_PER_PAGE);
+
+  console.log('[Dashboard] Pagination info:', {
+    total: allNotes.length,
+    page: page,
+    totalPages: totalPages,
+    startIndex: startIndex,
+    endIndex: endIndex,
+    showing: notesToShow.length
+  });
 
   let html = '';
 
@@ -141,10 +174,13 @@ export function renderDashboardPage(page) {
   html += '<div class="dashboard-grid">';
 
   for (const note of notesToShow) {
+    console.log('[Dashboard] Rendering card for:', note.title, '(path:', note.path + ')');
+
     let thumbnailHtml;
 
     if (note.thumbnail) {
       thumbnailHtml = `<img class="note-card-thumbnail" src="${note.thumbnail}" alt="${note.title}" loading="lazy">`;
+      console.log('[Dashboard] Card thumbnail:', note.thumbnail);
     } else {
       thumbnailHtml = `
         <div class="note-card-thumbnail-placeholder">
@@ -154,6 +190,7 @@ export function renderDashboardPage(page) {
           </svg>
         </div>
       `;
+      console.log('[Dashboard] Card thumbnail: using placeholder');
     }
 
     html += `
@@ -191,6 +228,7 @@ export function renderDashboardPage(page) {
     html += '</div>';
   }
 
+  console.log('[Dashboard] ===== Rendering dashboard page', page, 'END =====');
   return html;
 }
 

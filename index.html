@@ -266,12 +266,17 @@
     }
 
     function convertImageLinks(html) {
+      console.log('[Render] Converting image links, HTML length:', html.length);
+      
+      const matches = html.match(/!\[\[(.*?)\]\]/g);
+      console.log('[Render] Image links found:', matches);
+      
       return html.replace(
         /!\[\[(.*?)\]\]/g,
         (match, filename) => {
           const url = getRawUrl('_image_' + filename);
           console.log('[Render] Image link:', filename, '→', url);
-          return `<img src="${url}" alt="${filename}" style="max-width:100%; height:auto; border-radius:8px; margin:16px 0;" />`;
+          return `<img src="${url}" alt="${filename}" style="max-width:100%; height:auto; border-radius:8px; margin:16px 0;" loading="lazy" />`;
         }
       );
     }

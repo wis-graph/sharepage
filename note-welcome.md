@@ -1,3 +1,7 @@
+---
+thumbnail: logo.png
+---
+
 # Welcome to ShareHub!
 
 This is a sample note to demonstrate ShareHub's markdown rendering capabilities.

@@ -260,8 +260,7 @@
       return html.replace(
         /\[\[(.*?)\]\]/g,
         (match, filename) => {
-          const path = filename.endsWith('.md') ? filename : filename + '.md';
-          return `<a href="#/${path}" class="internal-link">${filename}</a>`;
+          return `<a href="#/${filename}.md" class="internal-link">${filename}</a>`;
         }
       );
     }

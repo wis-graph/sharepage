@@ -266,12 +266,13 @@
     }
 
     function convertImageLinks(html) {
-      console.log('[Render] Converting image links, HTML length:', html.length);
+      console.log('[Render] Converting image links');
+      console.log('[Render] HTML before conversion:', html.substring(0, 500) + '...');
       
       const matches = html.match(/!\[\[(.*?)\]\]/g);
       console.log('[Render] Image links found:', matches);
       
-      return html.replace(
+      const result = html.replace(
         /!\[\[(.*?)\]\]/g,
         (match, filename) => {
           const url = getRawUrl('_image_' + filename);
@@ -279,6 +280,9 @@
           return `<img src="${url}" alt="${filename}" style="max-width:100%; height:auto; border-radius:8px; margin:16px 0;" loading="lazy" />`;
         }
       );
+      
+      console.log('[Render] HTML after conversion:', result.substring(0, 500) + '...');
+      return result;
     }
 
     async function navigate(hash) {

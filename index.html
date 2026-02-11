@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ShareHub Test</title>
+  <title>ShareHub</title>
   <style>
     * {
       margin: 0;
@@ -17,68 +17,174 @@
       color: #111827;
     }
 
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 250px;
+      height: 100vh;
+      background-color: white;
+      border-right: 1px solid #e5e7eb;
       padding: 20px;
+      overflow-y: auto;
     }
 
-    .header {
-      background-color: white;
-      padding: 20px;
-      border-bottom: 1px solid #e5e7eb;
+    .sidebar h2 {
+      font-size: 18px;
+      font-weight: 600;
       margin-bottom: 20px;
     }
 
-    .header h1 {
-      font-size: 24px;
-      font-weight: 600;
+    .sidebar ul {
+      list-style: none;
+    }
+
+    .sidebar li {
+      margin-bottom: 10px;
+    }
+
+    .sidebar a {
+      display: block;
+      padding: 8px 12px;
+      text-decoration: none;
+      color: #374151;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+
+    .sidebar a:hover {
+      background-color: #f3f4f6;
+    }
+
+    .sidebar a.active {
+      background-color: #e0f2fe;
+      color: #0284c7;
+    }
+
+    .main-content {
+      margin-left: 250px;
+      padding: 20px;
     }
 
     .content {
       background-color: white;
-      padding: 20px;
+      padding: 30px;
       border-radius: 8px;
       border: 1px solid #e5e7eb;
+      max-width: 800px;
+    }
+
+    .content h1 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 15px;
     }
 
     .content h2 {
-      font-size: 18px;
+      font-size: 22px;
       font-weight: 600;
       margin-bottom: 10px;
+      margin-top: 20px;
     }
 
     .content p {
       margin-bottom: 10px;
+      line-height: 1.6;
     }
 
     .content ul {
       margin-left: 20px;
       margin-bottom: 10px;
     }
+
+    .content li {
+      margin-bottom: 5px;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h1>ShareHub - Static Test</h1>
-    </div>
-    <div class="content">
-      <h2>Welcome to ShareHub</h2>
-      <p>This is a static test page to verify basic functionality.</p>
-      <p>If you can see this, HTML and CSS are working correctly.</p>
-      <h2>Next Steps</h2>
-      <ul>
-        <li>Add routing (hash-based)</li>
-        <li>Add dynamic content loading</li>
-        <li>Add markdown rendering</li>
-      </ul>
+  <div class="sidebar">
+    <h2>ShareHub</h2>
+    <ul>
+      <li><a href="#/" id="nav-home" class="active">Home</a></li>
+      <li><a href="#/note-welcome.md" id="nav-welcome">Welcome</a></li>
+      <li><a href="#/note-todo.md" id="nav-todo">Todo</a></li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <div class="content" id="app">
+      <!-- Dynamic content will be injected here -->
     </div>
   </div>
 
   <script>
-    console.log('[Static] Page loaded');
-    console.log('[Static] Current hash:', window.location.hash);
+    const routes = {
+      '/': {
+        title: 'Home',
+        content: `
+          <h1>Welcome to ShareHub</h1>
+          <p>This is a hash-based routing test.</p>
+          <h2>Available Routes</h2>
+          <ul>
+            <li><a href="#/">Home</a> - This page</li>
+            <li><a href="#/note-welcome.md">Welcome</a> - Welcome note</li>
+            <li><a href="#/note-todo.md">Todo</a> - Todo list</li>
+          </ul>
+          <p>Try clicking the links in the sidebar to navigate!</p>
+        `
+      },
+      '/note-welcome.md': {
+        title: 'Welcome',
+        content: `
+          <h1>Welcome Note</h1>
+          <p>This is the welcome note.</p>
+          <p>Soon this will be loaded dynamically from GitHub.</p>
+        `
+      },
+      '/note-todo.md': {
+        title: 'Todo',
+        content: `
+          <h1>Todo List</h1>
+          <ul>
+            <li>Task 1</li>
+            <li>Task 2</li>
+            <li>Task 3</li>
+          </ul>
+          <p>Soon this will be loaded dynamically from GitHub.</p>
+        `
+      }
+    };
+
+    function navigate(hash) {
+      const route = routes[hash];
+      
+      if (route) {
+        document.getElementById('app').innerHTML = route.content;
+        document.title = route.title + ' - ShareHub';
+        
+        // Update sidebar active state
+        document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+        const navLink = document.querySelector('.sidebar a[href="#' + hash + '"]');
+        if (navLink) navLink.classList.add('active');
+        
+        console.log('[Router] Navigated to:', hash);
+      } else {
+        console.log('[Router] Route not found:', hash);
+        document.getElementById('app').innerHTML = '<h1>404 Not Found</h1><p>The route "' + hash + '" does not exist.</p>';
+      }
+    }
+
+    function handleHashChange() {
+      const hash = window.location.hash.slice(1) || '/';
+      navigate(hash);
+    }
+
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHashChange);
+
+    // Handle initial load
+    handleHashChange();
   </script>
 </body>
 </html>

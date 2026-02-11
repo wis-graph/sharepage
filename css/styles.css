@@ -301,15 +301,8 @@
 
     /* Document Content */
     .document-container {
-      background-color: #ffffff;
-      padding: 40px;
-      border-radius: 12px;
-      border: 1px solid #e5e7eb;
-    }
-
-    body.theme-dark .document-container {
-      background-color: #161b22;
-      border-color: #30363d;
+      background-color: transparent;
+      padding: 40px 0;
     }
 
     .loading, .error {
@@ -539,6 +532,20 @@
       overflow-x: auto;
       overflow-y: hidden;
       padding: 12px 0;
+    }
+
+    /* Images */
+    .markdown img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 24px auto;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    body.theme-dark .markdown img {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
     }
 
     /* Back Button */

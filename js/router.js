@@ -1,13 +1,10 @@
-import { fetchFile, transformObsidianImageLinks, transformInternalLinks, routes } from './utils.js';
+import { fetchFile, transformObsidianImageLinks, transformInternalLinks, routes, parseFrontmatter } from './utils.js';
+import { createTagTicker } from './tag-ticker.js';
 import { applySyntaxHighlighting, renderMermaidDiagrams, protectMath, restoreMath } from './renderer.js';
 import { loadDashboardNotes, renderDashboardPage } from './dashboard.js';
 import { addHeadingIds, renderTOC, initScrollHighlight, stopScrollHighlight } from './toc.js';
 import { initImageViewer } from './image-viewer.js';
 import { initCodeUtils } from './code-utils.js';
-
-function removeFrontmatter(markdown) {
-  return markdown.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, '');
-}
 
 export async function navigate(hash) {
   if (hash === '/') {
@@ -22,7 +19,10 @@ export async function navigate(hash) {
       tocContainer.innerHTML = '';
     }
 
-    document.getElementById('app').innerHTML = '<div class="loading">Loading dashboard...</div>';
+    const mainLayout = document.querySelector('.main-layout');
+    if (mainLayout) mainLayout.classList.add('is-dashboard');
+
+    document.getElementById('app').innerHTML = '<div class="loading-container"><div class="spinner"></div><div class="loading-text">Loading Dashboard</div></div>';
     document.title = 'Dashboard - ShareHub';
 
     console.log('[Router] Loading dashboard');
@@ -36,7 +36,10 @@ export async function navigate(hash) {
     const route = routes[hash];
 
     if (route) {
-      document.getElementById('app').innerHTML = '<div class="loading">Loading...</div>';
+      const mainLayout = document.querySelector('.main-layout');
+      if (mainLayout) mainLayout.classList.remove('is-dashboard');
+
+      document.getElementById('app').innerHTML = '<div class="loading-container"><div class="spinner"></div><div class="loading-text">Loading Content</div></div>';
       document.title = route.title + ' - ShareHub';
 
       console.log('[Router] Navigating to:', hash);
@@ -45,8 +48,11 @@ export async function navigate(hash) {
         let content = await fetchFile(route.file);
         console.log('[Render] Original markdown length:', content.length);
 
-        content = removeFrontmatter(content);
-        console.log('[Render] Markdown after removing frontmatter length:', content.length);
+        const { data, content: bodyContent } = parseFrontmatter(content);
+        content = bodyContent;
+        console.log('[Render] Markdown after parsing frontmatter length:', content.length);
+
+        const tickerHtml = createTagTicker(data.tags);
 
         content = transformObsidianImageLinks(content);
         console.log('[Render] Markdown after image conversion length:', content.length);
@@ -66,7 +72,12 @@ export async function navigate(hash) {
 
         html = transformInternalLinks(html);
 
-        document.getElementById('app').innerHTML = `<div class="document-container markdown">${html}</div>`;
+        document.getElementById('app').innerHTML = `
+          <div class="document-container markdown">
+            ${tickerHtml}
+            ${html}
+          </div>
+        `;
         initImageViewer();
         initCodeUtils();
 

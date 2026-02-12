@@ -1,17 +1,20 @@
-/* Navigation Bar */
 .navbar {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   height: 60px;
-  background-color: var(--color-surface-base);
-  border-bottom: 2px solid var(--color-border-strong);
+  background-color: transparent;
+  /* Full transparency */
+  backdrop-filter: blur(12px);
+  /* Glassmorphism */
+  -webkit-backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 var(--space-3);
+  padding: 0 var(--space-4);
   z-index: 1000;
+  transition: background-color 0.3s ease;
 }
 
 .navbar-left {
@@ -76,10 +79,21 @@
 .main-layout {
   display: grid;
   grid-template-columns: 1fr min(900px, 100%) 1fr;
-  margin-top: 80px;
+  margin-top: 40px;
+  /* Reduced to remove the gap */
   padding: 0 var(--space-4) var(--space-6);
   gap: var(--space-4);
   align-items: start;
+}
+
+.main-layout.is-dashboard {
+  grid-template-columns: 1fr min(1600px, 100%) 1fr;
+  /* Increased max width for dashboard */
+}
+
+.main-layout.is-dashboard .toc-sidebar {
+  display: none;
+  /* No TOC on dashboard */
 }
 
 .content-wrapper {

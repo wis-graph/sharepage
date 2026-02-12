@@ -23,8 +23,13 @@ function initMermaid(appTheme) {
       primaryBorderColor: '#444c56',
       lineColor: '#8b949e',
       secondaryColor: '#21262d',
-      tertiaryColor: '#161b22'
-    } : {}
+      tertiaryColor: '#161b22',
+      background: 'transparent',
+      mainBkg: 'transparent'
+    } : {
+      background: 'transparent',
+      mainBkg: 'transparent'
+    }
   });
 }
 

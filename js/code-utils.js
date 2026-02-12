@@ -99,7 +99,7 @@ function attachMermaidActions() {
                 const xml = new XMLSerializer().serializeToString(svg);
                 const svg64 = btoa(unescape(encodeURIComponent(xml)));
                 const src = 'data:image/svg+xml;base64,' + svg64;
-                openLightbox(src);
+                openLightbox(src, true);
             }
         });
     });

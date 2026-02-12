@@ -21,8 +21,13 @@ export const routes = {
   }
 };
 
+// Use relative paths to support both local development and GitHub Pages hosting
 export function getRawUrl(filename) {
-  return `https://raw.githubusercontent.com/${github.owner}/${github.repo}/${github.branch}/${filename}`;
+  // If the filename already looks like a URL, return it
+  if (filename.startsWith('http')) return filename;
+
+  // For standard files, use relative path from the root
+  return `./${filename}`;
 }
 
 export async function fetchFile(filename) {
@@ -67,4 +72,39 @@ export function transformObsidianImageLinks(markdown) {
       return `![${filename}](${url})`;
     }
   );
+}
+
+export function parseFrontmatter(markdown) {
+  const frontmatterRegex = /^---\r?\n([\s\S]*?)\r?\n---/;
+  const match = markdown.match(frontmatterRegex);
+
+  const result = {
+    data: {},
+    content: markdown
+  };
+
+  if (match) {
+    const yamlContent = match[1];
+    result.content = markdown.replace(frontmatterRegex, '').trim();
+
+    const lines = yamlContent.split('\n');
+    lines.forEach(line => {
+      const separatorIndex = line.indexOf(':');
+      if (separatorIndex !== -1) {
+        const key = line.substring(0, separatorIndex).trim();
+        let value = line.substring(separatorIndex + 1).trim();
+
+        if (key === 'tags') {
+          if (value.startsWith('[') && value.endsWith(']')) {
+            value = value.slice(1, -1);
+          }
+          result.data[key] = value.split(',').map(t => t.trim()).filter(t => t);
+        } else {
+          result.data[key] = value;
+        }
+      }
+    });
+  }
+
+  return result;
 }

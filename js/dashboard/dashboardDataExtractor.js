@@ -7,7 +7,11 @@ export function extractDashboardLinks(dashboardContent) {
   const linkMatches = dashboardContent.matchAll(/\[\[([^\]]+)\]\]/g);
 
   for (const match of linkMatches) {
-    const linkText = match[1];
+    let linkText = match[1];
+    // Handle aliases like [[Actual Link|Display Name]]
+    if (linkText.includes('|')) {
+      linkText = linkText.split('|')[0];
+    }
     const cleanLink = linkText.replace(/\.md$/, '').trim();
     linkSet.add(cleanLink);
     console.log('[Dashboard] Found link:', cleanLink);
@@ -19,20 +23,35 @@ export function extractDashboardLinks(dashboardContent) {
 }
 
 function findRouteByLink(link, routes) {
-  const route = Object.entries(routes).find(([path, route]) => {
-    const filenameWithoutExt = route.file.replace(/\.md$/, '');
-    const match = filenameWithoutExt === link || path === '/' + link;
-    if (match) {
-      console.log('[Dashboard] Matched route:', path, '→', route.file);
-    }
-    return match;
+  // Normalize link for comparison (Obsidian style)
+  const normalizedLink = link.toLowerCase().replace(/\s+/g, '-').replace(/\.md$/, '');
+
+  // 1. Try to find exact match in files
+  let routeEntry = Object.entries(routes).find(([path, route]) => {
+    const filenameWithoutExt = route.file.replace(/\.md$/, '').toLowerCase();
+    return filenameWithoutExt === normalizedLink || path.slice(1).toLowerCase() === normalizedLink;
   });
 
-  return route;
+  // 2. If not found, Auto-Discovery: register a new route
+  if (!routeEntry) {
+    console.log('[Dashboard] Auto-Discovering route for:', link);
+    const path = '/' + normalizedLink;
+    const file = link.endsWith('.md') ? link : link + '.md';
+
+    // Register it globally
+    routes[path] = {
+      title: link.replace(/\.md$/, ''),
+      file: file
+    };
+
+    return [path, routes[path]];
+  }
+
+  return routeEntry;
 }
 
 function extractMetadata(markdown, filename) {
-  const frontmatterMatch = markdown.match(/^---\n([\s\S]*?)\n---/);
+  const frontmatterMatch = markdown.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   let title = filename.replace(/\.md$/, '').replace(/^_/, '').replace(/^note-/, '');
   let description = '';
   let thumbnail = null;
@@ -51,11 +70,11 @@ function extractMetadata(markdown, filename) {
   }
 
   const contentWithoutFrontmatter = frontmatterMatch
-    ? markdown.replace(/^---\n[\s\S]*?\n---\n/, '')
+    ? markdown.replace(/^---\r?\n[\s\S]*?\r?\n---(\r?\n)?/, '')
     : markdown;
 
   const firstParagraph = contentWithoutFrontmatter.match(/^#+\s*(.+)$/m) ||
-                        contentWithoutFrontmatter.match(/^(?!\s*$|#+\s).+/m);
+    contentWithoutFrontmatter.match(/^(?!\s*$|#+\s).+/m);
 
   if (firstParagraph) {
     description = firstParagraph[1]

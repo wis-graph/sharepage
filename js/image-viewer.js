@@ -34,7 +34,7 @@ function wrapImage(img) {
     wrapper.appendChild(img);
 }
 
-export function openLightbox(src) {
+export function openLightbox(src, isDiagram = false) {
     // Create modal if it doesn't exist
     let modal = document.getElementById('image-viewer-modal');
     if (!modal) {
@@ -44,6 +44,12 @@ export function openLightbox(src) {
     const modalImg = modal.querySelector('img');
     modalImg.src = src;
     modalImg.style.transform = 'scale(1) translate(0px, 0px)';
+
+    if (isDiagram) {
+        modalImg.classList.add('is-diagram');
+    } else {
+        modalImg.classList.remove('is-diagram');
+    }
 
     currentScale = 1;
     moveX = 0;

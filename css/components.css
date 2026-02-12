@@ -1,31 +1,47 @@
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: var(--space-3);
-  margin-top: var(--space-3);
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  justify-content: center;
+  /* Center cards if they don't fill the row */
+  gap: 0;
+  margin-top: var(--space-6);
+  border: none;
+  padding: 3px 0 0 3px;
+  max-width: 100%;
 }
 
 
 .note-card {
   background-color: var(--color-surface-base);
-  border: 2px solid var(--color-border-default);
+  /* Apply bold border to all sides */
+  border: 3px solid var(--color-border-strong);
+  /* Collapse borders by overlapping them */
+  margin: -3px 0 0 -3px;
   border-radius: var(--radius-none);
   overflow: hidden;
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
+  position: relative;
+  z-index: 1;
 }
 
 .note-card:hover {
-  opacity: 0.8;
+  background-color: var(--color-surface-muted);
+  transform: scale(1.03);
+  z-index: 10;
+  /* Bring to front so borders are visible */
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.2);
+  /* Ensure border stays solid on hover */
+  border-color: var(--color-border-strong);
 }
 
 .note-card-thumbnail {
   width: 100%;
   aspect-ratio: 3 / 2;
   object-fit: cover;
-  border-bottom: 2px solid var(--color-border-default);
+  border-bottom: 3px solid var(--color-border-strong);
 }
 
 .note-card-thumbnail-placeholder {
@@ -35,7 +51,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: 2px solid var(--color-border-default);
+  border-bottom: 3px solid var(--color-border-strong);
 }
 
 .note-card-thumbnail-placeholder svg {
@@ -146,4 +162,61 @@
 .back-button:hover {
   opacity: 0.8;
   transform: translateX(-4px);
+}
+
+/* Tag Ticker */
+.tag-ticker-container {
+  width: calc(100% + 48px);
+  margin-left: -24px;
+  height: 32px;
+  background: linear-gradient(to right, #3b82f6 0%, #2563eb 100%);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-8);
+  transform: skewX(-10deg);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 5;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
+}
+
+.tag-ticker-track {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  animation: scroll-left 60s linear infinite;
+  will-change: transform;
+}
+
+@keyframes scroll-left {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.ticker-tag {
+  font-family: 'SF Mono', SFMono-Regular, ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 800;
+  color: #ffffff;
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  letter-spacing: 0.15em;
+  transform: skewX(10deg);
+}
+
+.ticker-dot {
+  width: 4px;
+  height: 4px;
+  background-color: white;
+  border-radius: 50%;
+  opacity: 0.6;
 }

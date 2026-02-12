@@ -1,4 +1,4 @@
-import { fetchFile, getRawUrl, transformObsidianImageLinks, parseFrontmatter } from '../utils.js?v=7777';
+import { fetchFile, getRawUrl, transformObsidianImageLinks, parseFrontmatter } from '../utils.js?v=8888';
 
 /**
  * Extracts links grouped by sections based on ## Headings
@@ -89,12 +89,18 @@ function extractThumbnail(content, metadata) {
     return url;
   }
 
+  // Strip code blocks to avoid false positives in guides/documentation
+  // Remove fenced code blocks and inline code
+  const contentCleaned = content
+    .replace(/```[\s\S]*?```/g, '')
+    .replace(/`[^`]*`/g, '');
+
   // 1. Search for Obsidian Image ![[...]]
-  const obsidianMatch = content.match(/!\[\[([^\]]+)\]\]/);
+  const obsidianMatch = contentCleaned.match(/!\[\[([^\]]+)\]\]/);
   let obsidianIndex = obsidianMatch ? obsidianMatch.index : Infinity;
 
   // 2. Search for Markdown Image ![...](...)
-  const markdownMatch = content.match(/!\[([^\]]*)\]\(([^)]+)\)/);
+  const markdownMatch = contentCleaned.match(/!\[([^\]]*)\]\(([^)]+)\)/);
   let markdownIndex = markdownMatch ? markdownMatch.index : Infinity;
 
   // Determine which comes first

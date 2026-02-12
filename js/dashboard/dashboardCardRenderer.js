@@ -1,5 +1,5 @@
-import { prefetchFile, BASE_PATH, IS_LOCAL } from '../utils.js?v=7777';
-import { navigate } from '../router.js?v=7777';
+import { prefetchFile, BASE_PATH, IS_LOCAL } from '../utils.js?v=8888';
+import { navigate } from '../router.js?v=8888';
 
 const PREMIUM_GRADIENTS = [
   'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',

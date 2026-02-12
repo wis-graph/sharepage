@@ -69,8 +69,13 @@ function generateStaticHtml(template, mdFilename) {
     }
 
     if (!ogImage) {
+        // Strip code blocks to avoid false positives
+        const contentCleaned = body
+            .replace(/```[\s\S]*?```/g, '')
+            .replace(/`[^`]*`/g, '');
+
         // Try to find first image or video link in body
-        const imageMatch = body.match(/!\[\[([^\]]+)\]\]/) || body.match(/!\[.*?\]\((.*?)\)/);
+        const imageMatch = contentCleaned.match(/!\[\[([^\]]+)\]\]/) || contentCleaned.match(/!\[.*?\]\((.*?)\)/);
         if (imageMatch) {
             const rawUrl = imageMatch[1] || imageMatch[2];
             if (rawUrl) {

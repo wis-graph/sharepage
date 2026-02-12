@@ -11,10 +11,9 @@ export function getRawUrl(filename) {
 
   const encodedFilename = encodeURIComponent(targetFile);
 
-  // Use a root-relative path to avoid issues with trailing slashes
-  // In local 'serve', it's just the filename. On GH Pages, it's also inside the repo folder.
-  // Using '.' ensures it stays relative to the current index.html location.
-  return `./${encodedFilename}`;
+  // Use a simple relative path. 
+  // 'serve' usually serves the current directory as root.
+  return `${encodedFilename}`;
 }
 
 export async function fetchFile(filename) {

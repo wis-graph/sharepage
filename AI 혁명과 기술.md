@@ -2,6 +2,7 @@
 created: 2026-02-11
 source_type: YouTube
 url: https://www.youtube.com/embed/7Re9B_yDzI0?si=bCEk8CzcFVG_z4xM
+description: AI 시장은 소수의 '신(God) 모델'과 다수의 '작은 모델'로 양분될 것이며, 가격 하락(Tokens by the drink)이 폭발적인 수요를 견인할 것이다.
 channel: A16Z
 author: Marc Andreessen
 status: 🌲 Permanent Note
@@ -15,7 +16,6 @@ tags:
 ![](https://www.youtube.com/embed/7Re9B_yDzI0?si=bCEk8CzcFVG_z4xM)
 
 > [!ABSTRACT] 3줄 요약
->
 > 1. AI 혁명은 인터넷보다 더 큰 규모의 80년 주기 기술 혁명이며, 현재는 3년 차에 불과한 초기 단계다.
 > 2. AI 시장은 소수의 '신(God) 모델'과 다수의 '작은 모델'로 양분될 것이며, 가격 하락(Tokens by the drink)이 폭발적인 수요를 견인할 것이다.
 > 3. 미국과 중국의 AI 패권 경쟁은 '2차 냉전'과 유사하며, 오픈소스 생태계와 정책적 지원이 미국의 핵심 경쟁력이 될 것이다.

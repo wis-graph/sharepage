@@ -1,6 +1,6 @@
-import { fetchFile } from './utils.js?v=15000';
-import { loadSectionedDashboard } from './dashboard/dashboardDataExtractor.js?v=15000';
-import { renderSectionedDashboard, renderDashboardControls } from './dashboard/dashboardCardRenderer.js?v=15000';
+import { fetchFile } from './utils.js?v=16000';
+import { loadSectionedDashboard } from './dashboard/dashboardDataExtractor.js?v=16000';
+import { renderSectionedDashboard, renderDashboardControls } from './dashboard/dashboardCardRenderer.js?v=16000';
 
 let dashboardState = {
   dashboardContent: '',
@@ -124,21 +124,42 @@ function renderFullDashboard() {
 // Global Event Handlers
 window.onDashboardSearch = (value) => {
   dashboardState.searchQuery = value;
+
   const app = document.getElementById('app');
-  // Re-render only if app is present (it should be)
-  if (app) {
-    // We need to re-render efficiently. Ideally VDOM, but innerHTML is fine for now.
-    // However, re-rendering the whole page causes input focus loss.
-    // Let's just re-render content area if possible, or restore focus.
+  if (!app) return;
 
-    // Simple approach: Re-render everything and restore focus
+  const filteredSections = filterSections(
+    dashboardState.sections,
+    dashboardState.searchQuery,
+    dashboardState.activeTags
+  );
+
+  let contentHtml = '';
+  if (filteredSections.length === 0) {
+    contentHtml = `
+        <div class="empty-state">
+          <p>No notes found matching your criteria.</p>
+        </div>
+      `;
+  } else {
+    contentHtml = renderSectionedDashboard(filteredSections);
+  }
+
+  const controls = document.querySelector('.dashboard-controls');
+
+  if (controls) {
+    // Remove everything after controls
+    while (controls.nextElementSibling) {
+      controls.nextElementSibling.remove();
+    }
+    // Append new content
+    controls.insertAdjacentHTML('afterend', contentHtml);
+  } else {
+    // Fallback
     app.innerHTML = renderFullDashboard();
-
-    // Restore focus
     const input = document.querySelector('.dashboard-search-input');
     if (input) {
       input.focus();
-      // Move cursor to end
       const val = input.value;
       input.value = '';
       input.value = val;

@@ -1,7 +1,7 @@
-import { navigate, initRouter } from './router.js?v=15000';
-import { BASE_PATH, IS_LOCAL } from './utils.js?v=15000';
-import { initTOCToggle } from './toc.js?v=15000';
-import { goToPage } from './dashboard.js?v=15000';
+import { navigate, initRouter } from './router.js?v=16000';
+import { BASE_PATH, IS_LOCAL } from './utils.js?v=16000';
+import { initTOCToggle } from './toc.js?v=16000';
+import { goToPage } from './dashboard.js?v=16000';
 
 // Expose goToPage to global scope for pagination
 window.goToPage = goToPage;

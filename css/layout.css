@@ -79,7 +79,7 @@
 .main-layout {
   display: grid;
   grid-template-columns: 1fr min(900px, 100%) 1fr;
-  margin-top: 40px;
+  margin-top: 100px;
   /* Reduced to remove the gap */
   padding: 0 var(--space-4) var(--space-6);
   gap: var(--space-4);

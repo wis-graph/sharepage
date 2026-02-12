@@ -1,6 +1,6 @@
 import { fetchFile, transformObsidianImageLinks, transformInternalLinks, parseFrontmatter } from './utils.js';
 import { createTagTicker } from './tag-ticker.js';
-import { applySyntaxHighlighting, renderMermaidDiagrams, protectMath, restoreMath } from './renderer.js';
+import { applySyntaxHighlighting, renderMermaidDiagrams, protectMath, restoreMath, normalizeMermaidAliases } from './renderer.js';
 import { loadDashboardNotes, renderDashboardPage } from './dashboard.js';
 import { addHeadingIds, renderTOC, initScrollHighlight, stopScrollHighlight } from './toc.js';
 import { initImageViewer } from './image-viewer.js';
@@ -102,6 +102,9 @@ async function processDocument(filename, rawContent) {
   // 1. Parse Frontmatter
   let { data, content } = parseFrontmatter(rawContent);
   console.log('[Render] Content after frontmatter:', content.length);
+
+  // 1.5. Normalize Mermaid Aliases
+  content = normalizeMermaidAliases(content);
 
   // 2. Transform Images
   content = transformObsidianImageLinks(content);

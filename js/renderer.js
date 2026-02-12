@@ -1,6 +1,13 @@
 const mathMap = new Map();
 let mathCounter = 0;
 
+export function normalizeMermaidAliases(markdown) {
+  // Normalize merlight, merdark, mer to mermaid
+  // We don't remove the dimension line here; we'll handle it in the renderer
+  // to ensure we have access to the DOM element for styling.
+  return markdown.replace(/```(merlight|merdark|mer)/g, '```mermaid');
+}
+
 export function protectMath(markdown) {
   mathMap.clear();
   mathCounter = 0;
@@ -79,16 +86,52 @@ export function renderMermaidDiagrams(html) {
   const mermaidBlocks = doc.querySelectorAll('pre code.language-mermaid, code.language-mermaid');
 
   mermaidBlocks.forEach((block) => {
-    const code = block.textContent.trim();
+    let code = block.textContent.trim();
+    let width = null;
+    let height = null;
+
+    // Check for dimension format in the first line:
+    // "300" -> width: 300px
+    // ",300" -> height: 300px
+    // "300,200" -> width: 300px, height: 200px
+    const lines = code.split('\n');
+    if (lines.length > 0) {
+      const firstLine = lines[0].trim();
+      const dimMatch = firstLine.match(/^(\d+)?(?:,(\d+))?$/);
+
+      if (dimMatch && (dimMatch[1] || dimMatch[2])) {
+        // It's a dimension line!
+        if (dimMatch[1]) width = dimMatch[1];
+        if (dimMatch[2]) height = dimMatch[2];
+
+        // Remove the dimension line from the code
+        code = lines.slice(1).join('\n').trim();
+      }
+    }
+
     const container = document.createElement('div');
     container.className = 'mermaid';
+
+    // Apply dimensions if found
+    if (width) container.style.width = width + 'px';
+    if (height) container.style.height = height + 'px';
+
+    // Preserve aspect ratio if only one dimension is set, or center it
+    if (width || height) {
+      container.style.maxWidth = '100%';
+      container.style.marginLeft = 'auto';
+      container.style.marginRight = 'auto';
+    }
+
     container.setAttribute('data-code', code); // Store original code for copy function
     container.textContent = code;
 
     // Replace the whole pre or code block
-    const target = block.tagName.toLowerCase() === 'code' && block.parentElement.tagName.toLowerCase() === 'pre'
+    // If inside a <pre>, replace the parent <pre>. Otherwise just the <code>.
+    const target = (block.parentElement && block.parentElement.tagName.toLowerCase() === 'pre')
       ? block.parentElement
       : block;
+
     target.replaceWith(container);
   });
 

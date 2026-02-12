@@ -11,18 +11,21 @@ export function getRawUrl(filename) {
 
   const encodedFilename = encodeURIComponent(targetFile);
 
-  // Use a simple relative path. 
-  // 'serve' usually serves the current directory as root.
-  return `${encodedFilename}`;
+  // Determine if we are running locally
+  // For local development, we want simple relative paths.
+  // For GitHub Pages, we also want relative paths to support the repo subfolder.
+  // The simplest relative path usually works best.
+
+  return encodedFilename;
 }
 
 export async function fetchFile(filename) {
-  console.log('[Fetch] Fetching:', filename);
+  console.log('[Fetch] Requesting file:', filename);
   const url = getRawUrl(filename);
-  console.log('[Fetch] URL:', url);
+  console.log('[Fetch] Resolved URL:', url, 'Current Location:', window.location.href);
 
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, { cache: 'no-cache' }); // Force no-cache at fetch level
     console.log('[Fetch] Response status:', response.status);
 
     if (!response.ok) {

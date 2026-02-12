@@ -1,3 +1,5 @@
+
+export const IS_LOCAL = ['localhost', '127.0.0.1'].includes(window.location.hostname);
 export const PAGINATION_ITEMS_PER_PAGE = 9;
 
 export function getRawUrl(filename) {
@@ -11,10 +13,7 @@ export function getRawUrl(filename) {
 
   const encodedFilename = encodeURIComponent(targetFile);
 
-  // Determine if we are running locally
-  const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
-
-  if (isLocal) {
+  if (IS_LOCAL) {
     // Local 'serve' prefers simple filename
     return encodedFilename;
   } else {

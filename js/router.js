@@ -6,106 +6,178 @@ import { addHeadingIds, renderTOC, initScrollHighlight, stopScrollHighlight } fr
 import { initImageViewer } from './image-viewer.js';
 import { initCodeUtils } from './code-utils.js';
 
+/**
+ * Main navigation entry point
+ * @param {string} hash - The URL hash (e.g. #/My-Note)
+ */
 export async function navigate(hash) {
-  if (hash === '/') {
-    stopScrollHighlight();
+  if (hash === '/' || hash === '') {
+    await handleDashboardRoute();
+  } else {
+    const filename = decodeURIComponent(hash.slice(1));
+    await handleDocumentRoute(filename);
+  }
+}
 
-    const tocSidebar = document.getElementById('toc-sidebar');
-    const tocContainer = document.getElementById('toc-content');
-    if (tocSidebar) {
-      tocSidebar.classList.remove('visible');
-    }
-    if (tocContainer) {
-      tocContainer.innerHTML = '';
-    }
+/**
+ * Handles the dashboard route logic
+ */
+async function handleDashboardRoute() {
+  prepareLayout({ isDashboard: true });
 
-    const mainLayout = document.querySelector('.main-layout');
-    if (mainLayout) mainLayout.classList.add('is-dashboard');
+  // Set Loading State
+  document.getElementById('app').innerHTML = '<div class="loading-container"><div class="spinner"></div><div class="loading-text">Loading Dashboard</div></div>';
+  document.title = 'Dashboard - ShareHub';
+  console.log('[Router] Loading dashboard');
 
-    document.getElementById('app').innerHTML = '<div class="loading-container"><div class="spinner"></div><div class="loading-text">Loading Dashboard</div></div>';
-    document.title = 'Dashboard - ShareHub';
-
-    console.log('[Router] Loading dashboard');
-
+  try {
     await loadDashboardNotes();
-
     const html = await renderDashboardPage(1);
     document.getElementById('app').innerHTML = html;
     window.scrollTo(0, 0);
-  } else {
-    // Dynamic routing: treat the hash as a filename
-    const filename = decodeURIComponent(hash.slice(1));
-    const mainLayout = document.querySelector('.main-layout');
-    if (mainLayout) mainLayout.classList.remove('is-dashboard');
+  } catch (error) {
+    renderError('Dashboard', error);
+  }
+}
 
-    document.getElementById('app').innerHTML = '<div class="loading-container"><div class="spinner"></div><div class="loading-text">Loading Content</div></div>';
-    document.title = filename + ' - ShareHub';
+/**
+ * Handles individual document route logic
+ * @param {string} filename 
+ */
+async function handleDocumentRoute(filename) {
+  prepareLayout({ isDashboard: false });
 
-    console.log('[Router] Dynamic navigation to:', filename);
+  // Set Loading State
+  document.getElementById('app').innerHTML = '<div class="loading-container"><div class="spinner"></div><div class="loading-text">Loading Content</div></div>';
+  document.title = `${filename} - ShareHub`;
+  console.log('[Router] Dynamic navigation to:', filename);
 
-    try {
-      let content = await fetchFile(filename);
-      console.log('[Render] Original markdown length:', content.length);
+  try {
+    const rawContent = await fetchFile(filename);
 
-      const { data, content: bodyContent } = parseFrontmatter(content);
-      content = bodyContent;
-      console.log('[Render] Markdown after parsing frontmatter length:', content.length);
+    // Process content (Refactored pipeline)
+    const { html, tags, title } = await processDocument(filename, rawContent);
 
-      const tickerHtml = createTagTicker(data.tags);
+    // Render View
+    renderDocumentView(title, tags, html);
 
-      content = transformObsidianImageLinks(content);
-      console.log('[Render] Markdown after image conversion length:', content.length);
+    // key post-render initializations
+    initPostRenderScripts();
 
-      // Protect math BEFORE marked.parse
-      content = protectMath(content);
+  } catch (error) {
+    renderError(filename, error);
+  }
+}
 
-      console.log('[Render] Parsing markdown with marked.js');
-      let html = marked.parse(content);
+/**
+ * Updates layout state (classes, TOC visibility)
+ */
+function prepareLayout({ isDashboard }) {
+  stopScrollHighlight();
 
-      html = addHeadingIds(html);
-      html = applySyntaxHighlighting(html);
-      html = renderMermaidDiagrams(html);
+  const tocSidebar = document.getElementById('toc-sidebar');
+  const tocContainer = document.getElementById('toc-content');
+  const mainLayout = document.querySelector('.main-layout');
 
-      // Restore math AFTER marked.parse
-      html = restoreMath(html);
+  // Reset TOC
+  if (tocSidebar) tocSidebar.classList.remove('visible');
+  if (tocContainer) tocContainer.innerHTML = '';
 
-      html = transformInternalLinks(html);
-
-      const docTitle = filename.replace(/\.md$/, '');
-
-      document.getElementById('app').innerHTML = `
-          <div class="document-container markdown">
-            <div class="document-title">${docTitle}</div>
-            ${tickerHtml}
-            ${html}
-          </div>
-        `;
-      initImageViewer();
-      initCodeUtils();
-
-      const mermaidElements = document.querySelectorAll('.mermaid');
-      console.log('[Router] Found mermaid elements:', mermaidElements.length);
-
-      if (mermaidElements.length > 0) {
-        await mermaid.run({
-          querySelector: '.mermaid'
-        });
-        console.log('[Router] Mermaid rendering complete');
-      }
-
-      renderTOC();
-      initScrollHighlight();
-
-      console.log('[Router] Content rendered');
-    } catch (error) {
-      console.error('[Router] Error:', error);
-      document.getElementById('app').innerHTML = `
-        <div class="error-container">
-          <h1>404 Not Found</h1>
-          <p>The document "<strong>${filename}</strong>" could not be loaded.</p>
-          <a href="#/" class="back-button">Go to Dashboard</a>
-        </div>
-      `;
+  // Update Main Layout Class
+  if (mainLayout) {
+    if (isDashboard) {
+      mainLayout.classList.add('is-dashboard');
+    } else {
+      mainLayout.classList.remove('is-dashboard');
     }
   }
+}
+
+/**
+ * Core processing pipeline: Markdown -> HTML
+ */
+async function processDocument(filename, rawContent) {
+  console.log('[Render] Original markdown length:', rawContent.length);
+
+  // 1. Parse Frontmatter
+  let { data, content } = parseFrontmatter(rawContent);
+  console.log('[Render] Content after frontmatter:', content.length);
+
+  // 2. Transform Images
+  content = transformObsidianImageLinks(content);
+
+  // 3. Protect Math
+  content = protectMath(content);
+
+  // 4. Parse Markdown into HTML
+  let html = marked.parse(content);
+
+  // 5. Post-processing HTML
+  html = addHeadingIds(html);
+  html = applySyntaxHighlighting(html);
+  html = renderMermaidDiagrams(html);
+  html = restoreMath(html);
+  html = transformInternalLinks(html);
+
+  return {
+    html: html,
+    tags: data.tags || [],
+    title: filename.replace(/\.md$/, '')
+  };
+}
+
+/**
+ * Updates the DOM with the processed document
+ */
+function renderDocumentView(title, tags, html) {
+  const tickerHtml = createTagTicker(tags);
+
+  document.getElementById('app').innerHTML = `
+      <div class="document-container markdown">
+        <div class="document-title">${title}</div>
+        ${tickerHtml}
+        ${html}
+      </div>
+    `;
+}
+
+/**
+ * Initializes utilities that need the DOM to be ready
+ */
+async function initPostRenderScripts() {
+  initImageViewer();
+  initCodeUtils();
+
+  // Initialize Mermaid
+  const mermaidElements = document.querySelectorAll('.mermaid');
+  if (mermaidElements.length > 0) {
+    try {
+      await mermaid.run({ querySelector: '.mermaid' });
+      console.log('[Router] Mermaid rendered');
+    } catch (e) {
+      console.warn('[Router] Mermaid error:', e);
+    }
+  }
+
+  // Initialize TOC
+  renderTOC();
+  initScrollHighlight();
+
+  console.log('[Router] Content fully rendered');
+}
+
+/**
+ * Renders the error page
+ */
+function renderError(resourceName, error) {
+  console.error(`[Router] Error loading ${resourceName}:`, error);
+  document.getElementById('app').innerHTML = `
+    <div class="error-container">
+      <h1>404 Not Found</h1>
+      <p>The document "<strong>${resourceName}</strong>" could not be loaded.</p>
+      <br/>
+      <p class="error-detail">${error.message}</p>
+      <a href="#/" class="back-button">Go to Dashboard</a>
+    </div>
+  `;
 }

@@ -84,28 +84,35 @@
   animation-timing-function: ease-in-out;
 }
 
-/* Custom Expanded Transition: Shared Element Morphing */
+/* Morphing Title Expansion */
 ::view-transition-old(active-note-expand),
 ::view-transition-new(active-note-expand) {
-  /* This ensures the card box itself morphs smoothly into the document box */
   animation-duration: 0.5s;
   animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  mix-blend-mode: normal;
 }
 
+/* Morphing Thumbnail */
+::view-transition-old(active-note-thumbnail),
+::view-transition-new(active-note-thumbnail) {
+  animation-duration: 0.4s;
+  mix-blend-mode: normal;
+}
+
+/* Document content fades in while header morphs */
 ::view-transition-new(active-note-expand) {
-  /* Layered fade-in of the new content during expansion */
   animation-name: note-emerge;
 }
 
 @keyframes note-emerge {
   from {
     opacity: 0;
-    transform: scale(0.9) translateY(20px);
+    transform: translateY(20px);
   }
 
   to {
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: translateY(0);
   }
 }
 

@@ -1,4 +1,4 @@
-import { prefetchFile } from '../utils.js?v=4800';
+import { prefetchFile } from '../utils.js?v=4900';
 
 export function renderNoteThumbnail(note) {
   if (note.thumbnail) {
@@ -49,18 +49,22 @@ window.handleCardClick = (path, el) => {
   // Add a quick feedback class
   el.classList.add('is-active');
 
-  // Set a shared transition name only on the clicked element
-  // This tells the browser: "This specific card becomes the next page content"
-  el.style.viewTransitionName = 'active-note-expand';
+  // Set shared transition names on key elements to help the browser "morph"
+  const thumbnail = el.querySelector('.note-card-thumbnail, .note-card-thumbnail-placeholder');
+  const title = el.querySelector('.note-card-title');
+
+  if (thumbnail) thumbnail.style.viewTransitionName = 'active-note-thumbnail';
+  if (title) title.style.viewTransitionName = 'active-note-expand';
 
   if (document.startViewTransition) {
     const transition = document.startViewTransition(() => {
       window.location.hash = path;
     });
 
-    // Clean up style after transition finishes to avoid duplicate names if returning
+    // Clean up style after transition finishes
     transition.finished.finally(() => {
-      if (el) el.style.viewTransitionName = '';
+      if (thumbnail) thumbnail.style.viewTransitionName = '';
+      if (title) title.style.viewTransitionName = '';
     });
   } else {
     window.location.hash = path;

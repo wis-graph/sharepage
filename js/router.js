@@ -1,10 +1,10 @@
-import { fetchFile, transformObsidianImageLinks, transformInternalLinks, parseFrontmatter, getRawUrl } from './utils.js?v=4800';
-import { createTagTicker } from './tag-ticker.js?v=4800';
-import { applySyntaxHighlighting, renderMermaidDiagrams, protectMath, restoreMath, normalizeMermaidAliases, transformYouTubeLinks } from './renderer.js?v=4800';
-import { loadDashboardNotes, renderDashboardPage } from './dashboard.js?v=4800';
-import { addHeadingIds, renderTOC, initScrollHighlight, stopScrollHighlight } from './toc.js?v=4800';
-import { initImageViewer } from './image-viewer.js?v=4800';
-import { initCodeUtils } from './code-utils.js?v=4800';
+import { fetchFile, transformObsidianImageLinks, transformInternalLinks, parseFrontmatter, getRawUrl } from './utils.js?v=4900';
+import { createTagTicker } from './tag-ticker.js?v=4900';
+import { applySyntaxHighlighting, renderMermaidDiagrams, protectMath, restoreMath, normalizeMermaidAliases, transformYouTubeLinks } from './renderer.js?v=4900';
+import { loadDashboardNotes, renderDashboardPage } from './dashboard.js?v=4900';
+import { addHeadingIds, renderTOC, initScrollHighlight, stopScrollHighlight } from './toc.js?v=4900';
+import { initImageViewer } from './image-viewer.js?v=4900';
+import { initCodeUtils } from './code-utils.js?v=4900';
 
 /**
  * Main navigation entry point
@@ -158,7 +158,7 @@ async function processDocument(filename, rawContent) {
       } else if (markdownMatch) {
         // Markdown image found first
         const url = markdownMatch[2];
-        const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=4800)|youtu\.be\/)([^"&?\/\s]{11})/;
+        const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=4900)|youtu\.be\/)([^"&?\/\s]{11})/;
         const ytMatch = url.match(youtubeRegex);
 
         if (ytMatch && ytMatch[1]) {
@@ -190,8 +190,8 @@ function renderDocumentView(title, tags, html, metadata) {
   const tickerHtml = createTagTicker(tags);
 
   document.getElementById('app').innerHTML = `
-      <div class="document-container markdown" style="view-transition-name: active-note-expand">
-        <div class="document-title">${title}</div>
+      <div class="document-container markdown">
+        <div class="document-title" style="view-transition-name: active-note-expand">${title}</div>
         ${tickerHtml}
         ${html}
       </div>

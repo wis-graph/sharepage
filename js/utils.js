@@ -1,33 +1,15 @@
-export const github = {
-  owner: 'wis-graph',
-  repo: 'sharepage',
-  branch: 'gh-pages'
-};
-
 export const PAGINATION_ITEMS_PER_PAGE = 9;
 
-export const routes = {
-  '/': {
-    title: 'Home',
-    file: '_home.md'
-  },
-  '/note-welcome': {
-    title: 'Welcome',
-    file: 'note-welcome.md'
-  },
-  '/note-todo': {
-    title: 'Todo',
-    file: 'note-todo.md'
-  }
-};
-
-// Use relative paths to support both local development and GitHub Pages hosting
 export function getRawUrl(filename) {
-  // If the filename already looks like a URL, return it
   if (filename.startsWith('http')) return filename;
 
-  // Encode filename to handle spaces and special characters (like Korean characters)
-  const encodedFilename = encodeURIComponent(filename);
+  // Ensure filename has .md extension if it's not a special file or image
+  let targetFile = filename;
+  if (!targetFile.includes('.') && !targetFile.startsWith('_image_')) {
+    targetFile += '.md';
+  }
+
+  const encodedFilename = encodeURIComponent(targetFile);
   return `./${encodedFilename}`;
 }
 

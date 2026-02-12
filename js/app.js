@@ -1,5 +1,9 @@
 import { navigate } from './router.js';
 import { initTOCToggle } from './toc.js';
+import { goToPage } from './dashboard.js';
+
+// Expose goToPage to global scope for pagination
+window.goToPage = goToPage;
 
 function initTheme() {
   const savedTheme = localStorage.getItem('theme') || 'light';

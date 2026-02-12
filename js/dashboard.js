@@ -1,48 +1,48 @@
-import { fetchFile, routes } from './utils.js';
-import { loadAllNotes } from './dashboard/dashboardDataExtractor.js';
+import { fetchFile, PAGINATION_ITEMS_PER_PAGE } from './utils.js';
+import { loadPageNotes } from './dashboard/dashboardDataExtractor.js';
 import { renderCardGrid } from './dashboard/dashboardCardRenderer.js';
-import { calculatePaginationInfo, renderPagination, shouldRenderPagination } from './dashboard/dashboardPagination.js';
+import { renderPagination, shouldRenderPagination } from './dashboard/dashboardPagination.js';
 
 let dashboardState = {
   currentPage: 1,
-  allNotes: []
+  dashboardContent: '',
+  totalLinks: 0
 };
 
 export async function loadDashboardNotes() {
-  console.log('[Dashboard] Loading dashboard notes...');
+  console.log('[Dashboard] Initializing dashboard content...');
 
   try {
-    const dashboardContent = await fetchFile('_home.md');
-    console.log('[Dashboard] _home.md length:', dashboardContent.length);
-
-    const notes = await loadAllNotes(dashboardContent, routes);
-
-    dashboardState = {
-      ...dashboardState,
-      allNotes: notes
-    };
-
-    console.log('[Dashboard] Notes loaded:', notes.length);
+    const content = await fetchFile('_home.md');
+    dashboardState.dashboardContent = content;
+    console.log('[Dashboard] _home.md loaded');
   } catch (error) {
-    console.error('[Dashboard] Error loading dashboard:', error);
-    dashboardState = {
-      ...dashboardState,
-      allNotes: []
-    };
+    console.error('[Dashboard] Error loading _home.md:', error);
+    dashboardState.dashboardContent = '';
   }
 }
 
-export function renderDashboardPage(page) {
+export async function renderDashboardPage(page) {
   console.log('[Dashboard] ===== Rendering dashboard page', page, 'START =====');
 
-  const { notesToShow, totalPages } = calculatePaginationInfo(dashboardState.allNotes, page);
+  if (!dashboardState.dashboardContent) {
+    return '<div class="loading">No content found in _home.md.</div>';
+  }
 
-  if (dashboardState.allNotes.length === 0) {
-    console.log('[Dashboard] No notes found');
+  // Load only the notes for the current page
+  const result = await loadPageNotes(
+    dashboardState.dashboardContent,
+    page,
+    PAGINATION_ITEMS_PER_PAGE
+  );
+
+  if (result.notes.length === 0) {
+    console.log('[Dashboard] No notes found for this page');
     return '<div class="loading">No notes found.</div>';
   }
 
-  const cardGridHtml = renderCardGrid(notesToShow);
+  const totalPages = Math.ceil(result.totalLinks / PAGINATION_ITEMS_PER_PAGE);
+  const cardGridHtml = renderCardGrid(result.notes);
   let html = cardGridHtml;
 
   if (shouldRenderPagination(totalPages)) {
@@ -53,13 +53,11 @@ export function renderDashboardPage(page) {
   return html;
 }
 
-export function goToPage(page) {
-  dashboardState = {
-    ...dashboardState,
-    currentPage: page
-  };
+export async function goToPage(page) {
+  dashboardState.currentPage = page;
+  document.getElementById('app').innerHTML = '<div class="loading-container"><div class="spinner"></div><div class="loading-text">Loading Page ' + page + '</div></div>';
 
-  const html = renderDashboardPage(page);
+  const html = await renderDashboardPage(page);
   document.getElementById('app').innerHTML = html;
   window.scrollTo(0, 0);
 }

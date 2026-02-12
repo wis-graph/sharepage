@@ -1,4 +1,4 @@
-import { fetchFile, getRawUrl, routes, transformObsidianImageLinks } from '../utils.js';
+import { fetchFile, getRawUrl, transformObsidianImageLinks } from '../utils.js';
 
 export function extractDashboardLinks(dashboardContent) {
   console.log('[Dashboard] Extracting links from dashboard...');
@@ -20,34 +20,6 @@ export function extractDashboardLinks(dashboardContent) {
   const links = Array.from(linkSet);
   console.log('[Dashboard] Total unique links:', links.length, '→', links);
   return links;
-}
-
-function findRouteByLink(link, routes) {
-  // Normalize link for comparison (Obsidian style)
-  const normalizedLink = link.toLowerCase().replace(/\s+/g, '-').replace(/\.md$/, '');
-
-  // 1. Try to find exact match in files
-  let routeEntry = Object.entries(routes).find(([path, route]) => {
-    const filenameWithoutExt = route.file.replace(/\.md$/, '').toLowerCase();
-    return filenameWithoutExt === normalizedLink || path.slice(1).toLowerCase() === normalizedLink;
-  });
-
-  // 2. If not found, Auto-Discovery: register a new route
-  if (!routeEntry) {
-    console.log('[Dashboard] Auto-Discovering route for:', link);
-    const path = '/' + normalizedLink;
-    const file = link.endsWith('.md') ? link : link + '.md';
-
-    // Register it globally
-    routes[path] = {
-      title: link.replace(/\.md$/, ''),
-      file: file
-    };
-
-    return [path, routes[path]];
-  }
-
-  return routeEntry;
 }
 
 function extractMetadata(markdown, filename) {
@@ -109,21 +81,16 @@ function extractThumbnail(content, metadata) {
   return null;
 }
 
-export async function extractNoteFromLink(link, routes) {
+export async function extractNoteFromLink(link) {
   console.log('[Dashboard] Processing link:', link);
 
-  const route = findRouteByLink(link, routes);
+  const filename = link.endsWith('.md') ? link : link + '.md';
+  const path = '/' + link.toLowerCase().replace(/\s+/g, '-').replace(/\.md$/, '');
 
-  if (!route) {
-    console.warn('[Dashboard] No route found for link:', link);
-    return null;
-  }
-
-  const [path, routeData] = route;
   const note = {
-    path,
-    file: routeData.file,
-    title: routeData.title
+    path: path, // This path is used for navigation (#/filename)
+    file: filename,
+    title: link.replace(/\.md$/, '')
   };
 
   try {
@@ -138,7 +105,8 @@ export async function extractNoteFromLink(link, routes) {
       ...note,
       title: metadata.title,
       description: metadata.description,
-      thumbnail: thumbnail
+      thumbnail: thumbnail,
+      path: '/' + note.file.replace(/\.md$/, '') // Ensure path is consistent with catch-all router
     };
 
     console.log('[Dashboard] Note extracted:', enrichedNote.title);
@@ -149,27 +117,34 @@ export async function extractNoteFromLink(link, routes) {
   }
 }
 
-export async function loadAllNotes(dashboardContent, routes) {
-  console.log('[Dashboard] ===== Loading dashboard notes START =====');
+export async function loadPageNotes(dashboardContent, pageNumber, itemsPerPage) {
+  console.log('[Dashboard] ===== Loading page', pageNumber, 'notes START =====');
 
   try {
-    const links = extractDashboardLinks(dashboardContent);
-    console.log('[Dashboard] Links to process:', links);
+    const allLinks = extractDashboardLinks(dashboardContent);
+    console.log('[Dashboard] Total links found:', allLinks.length);
 
-    const notePromises = links.map(link => extractNoteFromLink(link, routes));
+    const startIndex = (pageNumber - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, allLinks.length);
+    const linksToLoad = allLinks.slice(startIndex, endIndex);
+
+    console.log('[Dashboard] Links for current page:', linksToLoad);
+
+    const notePromises = linksToLoad.map(link => extractNoteFromLink(link));
     const notes = await Promise.all(notePromises);
     const validNotes = notes.filter(note => note !== null);
 
-    const sortedNotes = [...validNotes].sort((a, b) => a.title.localeCompare(b.title));
+    console.log('[Dashboard] Loaded', validNotes.length, 'notes for page', pageNumber);
 
-    console.log('[Dashboard] ===== Loading dashboard notes END =====');
-    console.log('[Dashboard] Total notes loaded:', sortedNotes.length);
-    console.log('[Dashboard] Notes:', sortedNotes.map(n => n.title));
-
-    return sortedNotes;
+    return {
+      notes: validNotes,
+      totalLinks: allLinks.length
+    };
   } catch (error) {
-    console.error('[Dashboard] ===== Error loading dashboard =====');
-    console.error('[Dashboard] Error details:', error);
-    return [];
+    console.error('[Dashboard] Error during page loading:', error);
+    return {
+      notes: [],
+      totalLinks: 0
+    };
   }
 }

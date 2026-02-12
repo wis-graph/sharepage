@@ -126,7 +126,7 @@ function bindTOCClickEvents() {
         const y = target.getBoundingClientRect().top + window.pageYOffset + yOffset;
         window.scrollTo({ top: y, behavior: 'smooth' });
 
-        if (window.innerWidth <= 1200 && tocSidebar) {
+        if (window.innerWidth <= 1300 && tocSidebar) {
           tocSidebar.classList.remove('open');
         }
       }
@@ -212,7 +212,7 @@ export function initTOCToggle() {
 
   // Close sidebar when clicking outside (on backdrop or document)
   document.addEventListener('click', (e) => {
-    if (window.innerWidth <= 1200 &&
+    if (window.innerWidth <= 1300 &&
       sidebar.classList.contains('open') &&
       !sidebar.contains(e.target) &&
       e.target !== toggle) {

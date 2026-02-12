@@ -5,13 +5,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ShareHub</title>
+
+  <!-- External Dependencies -->
   <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-  <link rel="stylesheet" href="css/bundle.css?v=202602121035">
+
+  <!-- Core Styles (Modified to load individually to avoid build issues) -->
+  <link rel="stylesheet" href="css/vars.css?v=1300">
+  <link rel="stylesheet" href="css/vars-tokens.css?v=1300">
+  <link rel="stylesheet" href="css/base.css?v=1300">
+  <link rel="stylesheet" href="css/layout.css?v=1300">
+  <link rel="stylesheet" href="css/components.css?v=1300">
+  <link rel="stylesheet" href="css/content.css?v=1300">
+  <link rel="stylesheet" href="css/toc.css?v=1300">
+  <link rel="stylesheet" href="css/responsive.css?v=1300">
 </head>
 
 <body>
@@ -45,7 +56,7 @@
     </aside>
   </div>
 
-  <script type="module" src="js/app.js?v=202602121035"></script>
+  <script type="module" src="js/app.js?v=1300"></script>
 </body>
 
 </html>

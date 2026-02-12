@@ -1,5 +1,5 @@
-/* Responsive - Increased breakpoint to 1200px for vertical monitors */
-@media (max-width: 1200px) {
+/* Responsive - Increased breakpoint to 1300px for vertical monitors */
+@media (max-width: 1300px) {
   .navbar {
     padding: 0 var(--space-2);
   }
@@ -10,6 +10,7 @@
     margin-top: 70px;
     width: 100%;
     max-width: 100vw;
+    overflow-x: hidden;
   }
 
   .content-wrapper {
@@ -21,15 +22,13 @@
 
   .main-content {
     width: 100%;
+    max-width: 100%;
   }
 
   .document-container {
     padding: var(--space-4) 0;
     width: 100%;
-  }
-
-  .dashboard-grid {
-    grid-template-columns: 1fr;
+    max-width: 100%;
   }
 
   .toc-sidebar {
@@ -48,6 +47,8 @@
     z-index: 3000;
     padding: var(--space-7) var(--space-4);
     box-shadow: -20px 0 50px rgba(0, 0, 0, 0.15);
+    display: none;
+    /* Hide when not active to prevent any interaction */
   }
 
   .theme-dark .toc-sidebar {
@@ -108,6 +109,7 @@
   .markdown h4 {
     padding-left: 42px !important;
     word-break: break-word;
+    max-width: 100%;
   }
 
   .markdown h1::before,

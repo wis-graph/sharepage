@@ -37,10 +37,10 @@
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   justify-content: center;
   /* Center cards if they don't fill the row */
-  gap: 0;
+  gap: var(--space-4);
   border: none;
-  /* Increase padding to ensure borders are not clipped on any side */
-  padding: 6px;
+  /* Increase padding to ensure borders/scale are not clipped */
+  padding: var(--space-5);
   max-width: 100%;
 }
 

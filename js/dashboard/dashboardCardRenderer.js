@@ -47,3 +47,23 @@ export function renderCardGrid(notes) {
     </div>
   `;
 }
+
+export function renderSectionedDashboard(sections) {
+  console.log('[Dashboard] Rendering sectioned dashboard with', sections.length, 'sections');
+
+  return sections.map(section => {
+    const cardHtmls = section.notes.map(note => renderNoteCard(note));
+
+    return `
+      <section class="dashboard-section">
+        <h2 class="section-header">
+          <span class="section-title">${section.title}</span>
+          <span class="section-count">${section.count}</span>
+        </h2>
+        <div class="dashboard-grid">
+          ${cardHtmls.join('')}
+        </div>
+      </section>
+    `;
+  }).join('');
+}

@@ -1,25 +1,55 @@
 import { fetchFile, getRawUrl, transformObsidianImageLinks, parseFrontmatter } from '../utils.js';
 
-export function extractDashboardLinks(dashboardContent) {
-  console.log('[Dashboard] Extracting links from dashboard...');
+/**
+ * Extracts links grouped by sections based on ## Headings
+ */
+export function extractSectionedLinks(dashboardContent) {
+  console.log('[Dashboard] Extracting sectioned links...');
+  const sections = [];
+  let currentSection = { title: 'General', links: [] };
 
-  const linkSet = new Set();
-  const linkMatches = dashboardContent.matchAll(/\[\[([^\]]+)\]\]/g);
+  const lines = dashboardContent.split('\n');
+  lines.forEach(line => {
+    const trimmedLine = line.trim();
+    if (!trimmedLine) return;
 
-  for (const match of linkMatches) {
-    let linkText = match[1];
-    // Handle aliases like [[Actual Link|Display Name]]
-    if (linkText.includes('|')) {
-      linkText = linkText.split('|')[0];
+    // Section Heading (## Title)
+    const headingMatch = trimmedLine.match(/^##\s+(.+)$/);
+    if (headingMatch) {
+      if (currentSection.links.length > 0 || currentSection.title !== 'General') {
+        sections.push(currentSection);
+      }
+      currentSection = { title: headingMatch[1].trim(), links: [] };
+      return;
     }
-    const cleanLink = linkText.replace(/\.md$/, '').trim();
-    linkSet.add(cleanLink);
-    console.log('[Dashboard] Found link:', cleanLink);
+
+    // Link Match ([[Link]])
+    const linkMatch = trimmedLine.match(/\[\[([^\]]+)\]\]/);
+    if (linkMatch) {
+      let linkText = linkMatch[1];
+      if (linkText.includes('|')) {
+        linkText = linkText.split('|')[0];
+      }
+      const cleanLink = linkText.replace(/\.md$/, '').trim();
+      // Avoid duplicates within the same section
+      if (!currentSection.links.includes(cleanLink)) {
+        currentSection.links.push(cleanLink);
+        console.log(`[Dashboard] Found link in section [${currentSection.title}]:`, cleanLink);
+      }
+    }
+  });
+
+  if (currentSection.links.length > 0) {
+    sections.push(currentSection);
   }
 
-  const links = Array.from(linkSet);
-  console.log('[Dashboard] Total unique links:', links.length, '→', links);
-  return links;
+  return sections;
+}
+
+export function extractDashboardLinks(dashboardContent) {
+  // Flat version for backward compatibility if needed, using the sectioned logic
+  const sections = extractSectionedLinks(dashboardContent);
+  return sections.flatMap(s => s.links);
 }
 
 function extractMetadata(markdown, filename) {
@@ -156,4 +186,27 @@ export async function loadPageNotes(dashboardContent, pageNumber, itemsPerPage) 
       totalLinks: 0
     };
   }
+}
+
+/**
+ * Loads all notes for all sections
+ * @param {string} dashboardContent 
+ */
+export async function loadSectionedDashboard(dashboardContent) {
+  const structuredLinks = extractSectionedLinks(dashboardContent);
+  const result = [];
+
+  for (const section of structuredLinks) {
+    const notePromises = section.links.map(link => extractNoteFromLink(link));
+    const notes = await Promise.all(notePromises);
+    const validNotes = notes.filter(n => n !== null);
+
+    result.push({
+      title: section.title,
+      notes: validNotes,
+      count: validNotes.length
+    });
+  }
+
+  return result;
 }

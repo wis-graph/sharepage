@@ -1,10 +1,43 @@
+.dashboard-section {
+  margin-bottom: var(--space-8);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+  padding: 0 var(--space-1);
+}
+
+.section-title {
+  font-size: var(--text-heading-2);
+  font-weight: 800;
+  color: var(--color-text-primary);
+  letter-spacing: -0.02em;
+}
+
+.section-count {
+  font-family: 'SF Mono', monospace;
+  font-size: var(--text-caption);
+  color: var(--color-text-meta);
+  opacity: 0.6;
+}
+
+.section-count::before {
+  content: '(';
+}
+
+.section-count::after {
+  content: ')';
+}
+
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   justify-content: center;
   /* Center cards if they don't fill the row */
   gap: 0;
-  margin-top: var(--space-6);
   border: none;
   /* Increase padding to ensure borders are not clipped on any side */
   padding: 6px;

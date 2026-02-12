@@ -1,63 +1,51 @@
-import { fetchFile, PAGINATION_ITEMS_PER_PAGE } from './utils.js';
-import { loadPageNotes } from './dashboard/dashboardDataExtractor.js';
-import { renderCardGrid } from './dashboard/dashboardCardRenderer.js';
-import { renderPagination, shouldRenderPagination } from './dashboard/dashboardPagination.js';
+import { fetchFile } from './utils.js';
+import { loadSectionedDashboard } from './dashboard/dashboardDataExtractor.js';
+import { renderSectionedDashboard } from './dashboard/dashboardCardRenderer.js';
 
 let dashboardState = {
-  currentPage: 1,
   dashboardContent: '',
-  totalLinks: 0
+  sections: []
 };
 
 export async function loadDashboardNotes() {
   console.log('[Dashboard] Initializing dashboard content...');
 
   try {
-    const content = await fetchFile('_home.md');
+    // Renamed from _home.md to _dashboard.md
+    const content = await fetchFile('_dashboard.md');
     dashboardState.dashboardContent = content;
-    console.log('[Dashboard] _home.md loaded');
+    console.log('[Dashboard] _dashboard.md loaded');
   } catch (error) {
-    console.error('[Dashboard] Error loading _home.md:', error);
+    console.error('[Dashboard] Error loading _dashboard.md:', error);
     dashboardState.dashboardContent = '';
   }
 }
 
-export async function renderDashboardPage(page) {
-  console.log('[Dashboard] ===== Rendering dashboard page', page, 'START =====');
+/**
+ * Renders the structured dashboard view
+ */
+export async function renderDashboardPage() {
+  console.log('[Dashboard] Rendering sectioned dashboard START');
 
   if (!dashboardState.dashboardContent) {
-    return '<div class="loading">No content found in _home.md.</div>';
+    return '<div class="loading">No content found in _dashboard.md. Please create it to organize your notes.</div>';
   }
 
-  // Load only the notes for the current page
-  const result = await loadPageNotes(
-    dashboardState.dashboardContent,
-    page,
-    PAGINATION_ITEMS_PER_PAGE
-  );
+  // Load all notes grouped by sections
+  const sections = await loadSectionedDashboard(dashboardState.dashboardContent);
 
-  if (result.notes.length === 0) {
-    console.log('[Dashboard] No notes found for this page');
-    return '<div class="loading">No notes found.</div>';
+  if (sections.length === 0) {
+    console.log('[Dashboard] No sections/links found');
+    return '<div class="loading">No notes linked in _dashboard.md yet.</div>';
   }
 
-  const totalPages = Math.ceil(result.totalLinks / PAGINATION_ITEMS_PER_PAGE);
-  const cardGridHtml = renderCardGrid(result.notes);
-  let html = cardGridHtml;
+  const html = renderSectionedDashboard(sections);
 
-  if (shouldRenderPagination(totalPages)) {
-    html += renderPagination(page, totalPages);
-  }
-
-  console.log('[Dashboard] ===== Rendering dashboard page', page, 'END =====');
+  console.log('[Dashboard] Rendering sectioned dashboard END');
   return html;
 }
 
+// Redirect goToPage to a no-op if called (pagination removed for sectioned view)
 export async function goToPage(page) {
-  dashboardState.currentPage = page;
-  document.getElementById('app').innerHTML = '<div class="loading-container"><div class="spinner"></div><div class="loading-text">Loading Page ' + page + '</div></div>';
-
-  const html = await renderDashboardPage(page);
-  document.getElementById('app').innerHTML = html;
-  window.scrollTo(0, 0);
+  console.warn('[Dashboard] Pagination ignored in sectioned view');
 }

@@ -1,5 +1,5 @@
 import { fetchFile, transformObsidianImageLinks, transformInternalLinks, routes } from './utils.js';
-import { applySyntaxHighlighting, renderMermaidDiagrams, renderMath } from './renderer.js';
+import { applySyntaxHighlighting, renderMermaidDiagrams, protectMath, restoreMath } from './renderer.js';
 import { loadDashboardNotes, renderDashboardPage } from './dashboard.js';
 import { addHeadingIds, renderTOC, initScrollHighlight, stopScrollHighlight } from './toc.js';
 
@@ -49,13 +49,19 @@ export async function navigate(hash) {
         content = transformObsidianImageLinks(content);
         console.log('[Render] Markdown after image conversion length:', content.length);
 
+        // Protect math BEFORE marked.parse
+        content = protectMath(content);
+
         console.log('[Render] Parsing markdown with marked.js');
         let html = marked.parse(content);
 
         html = addHeadingIds(html);
         html = applySyntaxHighlighting(html);
         html = renderMermaidDiagrams(html);
-        html = renderMath(html);
+
+        // Restore math AFTER marked.parse
+        html = restoreMath(html);
+
         html = transformInternalLinks(html);
 
         document.getElementById('app').innerHTML = `<div class="document-container markdown">${html}</div>`;

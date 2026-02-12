@@ -52,6 +52,13 @@
     display: block;
   }
 
+  .markdown h1,
+  .markdown h2,
+  .markdown h3,
+  .markdown h4 {
+    padding-left: 36px;
+  }
+
   .heading-anchor {
     opacity: 1;
     left: -20px;

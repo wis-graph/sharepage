@@ -71,6 +71,8 @@ export async function navigate(hash) {
 
       html = transformInternalLinks(html);
 
+      const docTitle = filename.replace(/\.md$/, '');
+
       document.getElementById('app').innerHTML = `
           <div class="document-container markdown">
             <div class="document-title">${docTitle}</div>

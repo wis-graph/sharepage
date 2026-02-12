@@ -1,11 +1,11 @@
-import { fetchFile, transformObsidianImageLinks, transformInternalLinks, parseFrontmatter, getRawUrl, BASE_PATH, IS_LOCAL } from './utils.js?v=17000';
-import { createTagTicker } from './tag-ticker.js?v=17000';
-import { applySyntaxHighlighting, renderMermaidDiagrams, protectMath, restoreMath, normalizeMermaidAliases, transformYouTubeLinks } from './renderer.js?v=17000';
-import { loadDashboardNotes, renderDashboardPage } from './dashboard.js?v=17000';
-import { addHeadingIds, renderTOC, initScrollHighlight, stopScrollHighlight } from './toc.js?v=17000';
-import { initImageViewer } from './image-viewer.js?v=17000';
-import { initCodeUtils } from './code-utils.js?v=17000';
-import { initLinkPreviews } from './preview.js?v=17000';
+import { fetchFile, transformObsidianImageLinks, transformInternalLinks, parseFrontmatter, getRawUrl, BASE_PATH, IS_LOCAL } from './utils.js?v=18000';
+import { createTagTicker } from './tag-ticker.js?v=18000';
+import { applySyntaxHighlighting, renderMermaidDiagrams, protectMath, restoreMath, normalizeMermaidAliases, transformYouTubeLinks } from './renderer.js?v=18000';
+import { loadDashboardNotes, renderDashboardPage } from './dashboard.js?v=18000';
+import { addHeadingIds, renderTOC, initScrollHighlight, stopScrollHighlight } from './toc.js?v=18000';
+import { initImageViewer } from './image-viewer.js?v=18000';
+import { initCodeUtils } from './code-utils.js?v=18000';
+import { initLinkPreviews } from './preview.js?v=18000';
 
 /**
  * Main navigation entry point

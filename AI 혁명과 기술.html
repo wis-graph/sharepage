@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 혁명과 기술 - SharePage</title>
+  <meta name="description" content="AI 시장은 소수의 '신(God) 모델'과 다수의 '작은 모델'로 양분될 것이며, 가격 하락(Tokens by the drink)이 폭발적인 수요를 견인할 것이다.">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="AI 혁명과 기술">
+  <meta property="og:description" content="AI 시장은 소수의 '신(God) 모델'과 다수의 '작은 모델'로 양분될 것이며, 가격 하락(Tokens by the drink)이 폭발적인 수요를 견인할 것이다.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="">
+  <meta property="og:image" content="https://www.youtube.com/embed/7Re9B_yDzI0?si=bCEk8CzcFVG_z4xM">
+
+  <!-- External Dependencies -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js?v=5000"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js?v=5000"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.min.js?v=5000"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js?v=5000"></script>
+
+  <!-- Core Styles (Modified to load individually to avoid build issues) -->
+  <link rel="stylesheet" href="css/vars.css?v=5000">
+  <link rel="stylesheet" href="css/vars-tokens.css?v=5000">
+  <link rel="stylesheet" href="css/base.css?v=5000">
+  <link rel="stylesheet" href="css/layout.css?v=5000">
+  <link rel="stylesheet" href="css/components.css?v=5000">
+  <link rel="stylesheet" href="css/content.css?v=5000">
+  <link rel="stylesheet" href="css/markdown-features.css?v=5000">
+  <link rel="stylesheet" href="css/toc.css?v=5000">
+  <link rel="stylesheet" href="css/responsive.css?v=5000">
+  <link rel="stylesheet" href="css/image-viewer.css?v=5000">
+  <link rel="stylesheet" href="css/code-utils.css?v=5000">
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="navbar-left">
+      <a href="/" class="navbar-logo">SharePage</a>
+    </div>
+    <div class="navbar-right">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+        <svg id="theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2">
+          <circle cx="12" cy="12" r="5"></circle>
+          <path
+            d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42">
+          </path>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <div class="main-layout">
+    <div class="content-wrapper">
+      <div class="main-content" id="app">
+      </div>
+    </div>
+    <aside class="toc-sidebar" id="toc-sidebar">
+      <button class="toc-toggle" id="toc-toggle">목차</button>
+      <div class="toc-content" id="toc-content">
+      </div>
+    </aside>
+  </div>
+
+  <script type="module" src="js/app.js?v=5000"></script>
+</body>
+
+</html>

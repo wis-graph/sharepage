@@ -5,7 +5,8 @@
   "scripts": {
     "build:css": "cat css/{vars,vars-tokens,base,layout,components,content,toc,responsive}.css > css/bundle.css",
     "build:css:watch": "onchange 'css/*.css' -- npm run build:css",
-    "dev": "npm run build:css:watch"
+    "dev": "npm run build:css:watch",
+    "sync": "node scripts/sync.js"
   },
   "keywords": [
     "obsidian",

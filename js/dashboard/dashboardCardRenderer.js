@@ -59,8 +59,14 @@ window.handleCardClick = (path, el) => {
   if (title) title.style.viewTransitionName = 'active-note-expand';
 
   const navigateTo = () => {
-    history.pushState(null, '', path);
-    navigate(path);
+    const IS_LOCAL = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+    const parts = window.location.pathname.split('/');
+    const BASE_PATH = IS_LOCAL ? '' : (parts[1] ? '/' + parts[1] : '');
+
+    const finalPath = BASE_PATH + (path.startsWith('/') ? '' : '/') + path;
+
+    history.pushState(null, '', finalPath);
+    navigate(finalPath);
   };
 
   if (document.startViewTransition) {

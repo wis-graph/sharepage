@@ -57,10 +57,13 @@ export function prefetchFile(filename) {
 }
 
 export function transformInternalLinks(html) {
+  const BASE_PATH = IS_LOCAL ? '' : '/' + window.location.pathname.split('/')[1];
+  const finalBase = BASE_PATH === '/' ? '' : BASE_PATH;
+
   return html.replace(
     /\[\[(.*?)\]\]/g,
     (match, filename) => {
-      const path = '/' + filename.replace(/\.md$/, '');
+      const path = finalBase + '/' + filename.replace(/\.md$/, '');
       return `<a href="${path}" class="internal-link">${filename}</a>`;
     }
   );

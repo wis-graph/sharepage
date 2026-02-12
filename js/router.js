@@ -7,18 +7,38 @@ import { initImageViewer } from './image-viewer.js?v=5000';
 import { initCodeUtils } from './code-utils.js?v=5000';
 import { initLinkPreviews } from './preview.js?v=5000';
 
+const IS_LOCAL = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+// Dynamically determine the base path (e.g., /sharepage or empty)
+const BASE_PATH = (() => {
+  if (IS_LOCAL) return '';
+  const parts = window.location.pathname.split('/');
+  // If it's github.io/repo/, parts[1] is the repo name. 
+  // If it's a custom domain, parts[1] might be empty or part of a path.
+  // For GitHub Pages repo hosting, this is usually index 1.
+  const path = '/' + parts[1];
+  return path === '/' ? '' : path;
+})();
+
 /**
  * Main navigation entry point
- * @param {string} path - The URL path (e.g. /My-Note)
+ * @param {string} rawPath - The URL path (e.g. /sharepage/My-Note)
  */
-export async function navigate(path) {
-  console.log('[Router] Navigating to:', path);
+export async function navigate(rawPath) {
+  console.log('[Router] Navigating to:', rawPath, '(Base:', BASE_PATH, ')');
 
-  // Normalize path
+  // Normalize path by removing BASE_PATH if present
+  let path = rawPath;
+  if (BASE_PATH && path.startsWith(BASE_PATH)) {
+    path = path.slice(BASE_PATH.length);
+  }
+
+  if (!path.startsWith('/')) path = '/' + path;
+
   let normalizedPath = path;
   if (normalizedPath.endsWith('.html')) {
     normalizedPath = normalizedPath.slice(0, -5);
   }
+
   if (normalizedPath === '' || normalizedPath === '/') {
     await handleDashboardRoute();
   } else {
@@ -48,7 +68,12 @@ export function initRouter() {
 
       e.preventDefault();
 
-      const path = url.pathname;
+      let path = url.pathname;
+
+      // Ensure path includes BASE_PATH if we are navigating internally
+      if (BASE_PATH && !path.startsWith(BASE_PATH)) {
+        path = BASE_PATH + (path.startsWith('/') ? '' : '/') + path;
+      }
 
       if (window.location.pathname === path) return;
 

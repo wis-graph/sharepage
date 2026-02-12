@@ -86,6 +86,14 @@ document.addEventListener('DOMContentLoaded', () => {
   initRouter();
   initTOCToggle();
 
+  // Update logo link with BASE_PATH
+  const IS_LOCAL = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+  const BASE_PATH = IS_LOCAL ? '' : '/' + window.location.pathname.split('/')[1];
+  const logo = document.querySelector('.navbar-logo');
+  if (logo) {
+    logo.href = (BASE_PATH === '/' ? '' : BASE_PATH) + '/';
+  }
+
   // Initial navigation based on current path
   const path = window.location.pathname;
   const hash = window.location.hash;

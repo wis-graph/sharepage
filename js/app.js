@@ -1,6 +1,6 @@
-import { navigate } from './router.js?v=4600';
-import { initTOCToggle } from './toc.js?v=4600';
-import { goToPage } from './dashboard.js?v=4600';
+import { navigate } from './router.js?v=4700';
+import { initTOCToggle } from './toc.js?v=4700';
+import { goToPage } from './dashboard.js?v=4700';
 
 // Expose goToPage to global scope for pagination
 window.goToPage = goToPage;
@@ -75,7 +75,12 @@ function handleHashChange() {
   const hash = window.location.hash.slice(1) || '/';
   console.log('[Router] Hash changed:', hash);
   window.scrollTo(0, 0);
-  navigate(hash);
+
+  if (document.startViewTransition) {
+    document.startViewTransition(() => navigate(hash));
+  } else {
+    navigate(hash);
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {

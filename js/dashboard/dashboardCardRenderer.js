@@ -1,3 +1,5 @@
+import { prefetchFile } from '../utils.js?v=4700';
+
 export function renderNoteThumbnail(note) {
   if (note.thumbnail) {
     console.log('[Card] Using thumbnail:', note.thumbnail);
@@ -25,7 +27,9 @@ export function renderNoteCard(note) {
     : '';
 
   return `
-    <div class="note-card" onclick="window.location.hash='${note.path}'">
+    <div class="note-card" 
+         onclick="handleCardClick('${note.path}', this)" 
+         onmouseenter="prefetchNote('${note.file}')">
       ${thumbnailHtml}
       <div class="note-card-content">
         <div class="note-card-title">${note.title}</div>
@@ -35,6 +39,25 @@ export function renderNoteCard(note) {
     </div>
   `;
 }
+
+// Global helpers for interaction
+window.prefetchNote = (file) => {
+  prefetchFile(file);
+};
+
+window.handleCardClick = (path, el) => {
+  // Add a quick feedback class
+  el.classList.add('is-active');
+
+  // Use View Transition API if supported for "Next.js-like" smooth transition
+  if (document.startViewTransition) {
+    document.startViewTransition(() => {
+      window.location.hash = path;
+    });
+  } else {
+    window.location.hash = path;
+  }
+};
 
 export function renderCardGrid(notes) {
   console.log('[Dashboard] Rendering card grid with', notes.length, 'notes');

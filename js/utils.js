@@ -22,26 +22,38 @@ export function getRawUrl(filename) {
   }
 }
 
+const fileCache = new Map();
+
 export async function fetchFile(filename) {
+  // Return from cache if available
+  if (fileCache.has(filename)) {
+    console.log('[Fetch] Returning from cache:', filename);
+    return fileCache.get(filename);
+  }
+
   console.log('[Fetch] Requesting file:', filename);
   const url = getRawUrl(filename);
-  console.log('[Fetch] Resolved URL:', url, 'Current Location:', window.location.href);
 
   try {
-    const response = await fetch(url, { cache: 'no-cache' }); // Force no-cache at fetch level
-    console.log('[Fetch] Response status:', response.status);
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
+    const response = await fetch(url, { cache: 'no-cache' });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
     const text = await response.text();
-    console.log('[Fetch] Content length:', text.length);
+    fileCache.set(filename, text); // Cache the result
     return text;
   } catch (error) {
     console.error('[Fetch] Error:', error);
     throw error;
   }
+}
+
+/**
+ * Prefetches a file and stores it in cache without returning it
+ */
+export function prefetchFile(filename) {
+  if (fileCache.has(filename)) return;
+  console.log('[Fetch] Prefetching:', filename);
+  fetchFile(filename).catch(() => { }); // Fire and forget, error handled inside fetchFile
 }
 
 export function transformInternalLinks(html) {

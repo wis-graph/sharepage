@@ -34,7 +34,7 @@ function wrapImage(img) {
     wrapper.appendChild(img);
 }
 
-function openLightbox(src) {
+export function openLightbox(src) {
     // Create modal if it doesn't exist
     let modal = document.getElementById('image-viewer-modal');
     if (!modal) {

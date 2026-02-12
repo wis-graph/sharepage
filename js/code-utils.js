@@ -2,6 +2,7 @@
  * ShareHub Code Utilities Module
  * Handles copy-to-clipboard for code blocks and mermaid diagrams.
  */
+import { openLightbox } from './image-viewer.js';
 
 export function initCodeUtils() {
     attachCodeCopyButtons();
@@ -87,6 +88,20 @@ function attachMermaidActions() {
         actionLayer.appendChild(copyCodeBtn);
         actionLayer.appendChild(copyImgBtn);
         wrapper.appendChild(actionLayer);
+
+        // Zoom Behavior for Mermaid
+        wrapper.addEventListener('click', (e) => {
+            // Only zoom if not clicking a button
+            if (e.target.closest('.mermaid-btn')) return;
+
+            const svg = container.querySelector('svg');
+            if (svg) {
+                const xml = new XMLSerializer().serializeToString(svg);
+                const svg64 = btoa(unescape(encodeURIComponent(xml)));
+                const src = 'data:image/svg+xml;base64,' + svg64;
+                openLightbox(src);
+            }
+        });
     });
 }
 

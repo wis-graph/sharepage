@@ -44,6 +44,19 @@
 .mermaid-wrapper {
     position: relative;
     margin: var(--space-6) 0;
+    background-color: var(--color-surface-muted);
+    border-radius: var(--radius-md, 8px);
+    padding: var(--space-6) var(--space-4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: zoom-in;
+    transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.mermaid-wrapper:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 .mermaid-actions {
@@ -63,7 +76,7 @@
 
 .mermaid-btn {
     padding: 6px 12px;
-    background-color: var(--color-surface-muted);
+    background-color: var(--color-surface-base);
     border: 1px solid var(--color-border-default);
     border-radius: 4px;
     color: var(--color-text-body);
@@ -77,7 +90,7 @@
 }
 
 .mermaid-btn:hover {
-    background-color: var(--color-surface-base);
+    background-color: var(--color-surface-muted);
     border-color: var(--color-accent-primary);
     color: var(--color-accent-primary);
 }

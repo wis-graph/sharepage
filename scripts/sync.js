@@ -103,7 +103,17 @@ function generateStaticHtml(template, mdFilename) {
     // Update Image
     if (ogImage) {
         // Encode it for safety if it's a local file ref
-        const finalImage = ogImage.startsWith('http') ? ogImage : ogImage.split('/').map(p => encodeURIComponent(p)).join('/');
+        // OG Image MUST be absolute URL for Kakaotalk/Facebook etc.
+        const DOMAIN = 'https://wis-graph.github.io/sharepage'; // TODO: Make configurable
+
+        let finalImage = ogImage.startsWith('http') ? ogImage : ogImage.split('/').map(p => encodeURIComponent(p)).join('/');
+
+        if (!finalImage.startsWith('http')) {
+            // Remove leading slash if present to avoid double slash with domain
+            if (finalImage.startsWith('/')) finalImage = finalImage.substring(1);
+            finalImage = `${DOMAIN}/${finalImage}`;
+        }
+
         html = html.replace(/<meta property="og:image" content=".*?">/, `<meta property="og:image" content="${finalImage}">`);
     }
 

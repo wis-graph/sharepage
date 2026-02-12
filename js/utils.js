@@ -25,11 +25,11 @@ export function getRawUrl(filename) {
 
   const encodedFilename = targetFile.split('/').map(part => encodeURIComponent(part)).join('/');
 
-  if (IS_LOCAL) {
-    return encodedFilename;
-  } else {
-    return `./${encodedFilename}`;
-  }
+  // Always use absolute path logic
+  // If IS_LOCAL (localhost), BASE_PATH is '', so '/notes/foo.md' works.
+  // If GitHub Pages, BASE_PATH is '/repo', so '/repo/notes/foo.md' works.
+  // This fixes fetching resources when the user is deep in a subdirectory (e.g. /sharepage/NoteName/)
+  return (BASE_PATH || '') + '/' + encodedFilename;
 }
 
 const fileCache = new Map();

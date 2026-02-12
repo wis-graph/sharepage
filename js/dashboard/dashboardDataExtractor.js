@@ -1,4 +1,4 @@
-import { fetchFile, getRawUrl, transformObsidianImageLinks, parseFrontmatter } from '../utils.js?v=10000';
+import { fetchFile, getRawUrl, transformObsidianImageLinks, parseFrontmatter } from '../utils.js?v=11111';
 
 /**
  * Extracts links grouped by sections based on ## Headings
@@ -197,23 +197,71 @@ export async function loadPageNotes(dashboardContent, pageNumber, itemsPerPage) 
 }
 
 /**
- * Loads all notes for all sections
+ * Loads all notes for all sections, plus auto-discovered unlisted notes
  * @param {string} dashboardContent 
  */
 export async function loadSectionedDashboard(dashboardContent) {
+  // 1. Load explicit sections
   const structuredLinks = extractSectionedLinks(dashboardContent);
   const result = [];
+  const processedNotes = new Set(); // Track notes added to prevent duplicates
 
+  console.log('[Dashboard] Loading explicit sections...');
   for (const section of structuredLinks) {
     const notePromises = section.links.map(link => extractNoteFromLink(link));
     const notes = await Promise.all(notePromises);
     const validNotes = notes.filter(n => n !== null);
+
+    validNotes.forEach(n => processedNotes.add(n.file));
 
     result.push({
       title: section.title,
       notes: validNotes,
       count: validNotes.length
     });
+  }
+
+  // 2. Load auto-dicovered notes
+  try {
+    console.log('[Dashboard] Checking for unlisted notes...');
+    // We fetch from posts/file_index.json because sync.js puts it there. 
+    // Wait, sync.js writes to posts/ but utils fetch logic might need tweaks if we ask for .json
+    // Let's rely on fetchFile to just get it if path is right. fetchFile uses getRawUrl.
+    // getRawUrl logic: if no extension, add .md. If .json, it might just return.
+    // Let's try direct fetch to avoid markdown logic interference for now, or just use fetchFile with full path.
+    // Actually, getRawUrl handles .json safely? line 16 check says !targetFile.includes('.')
+
+    // We need to fetch 'posts/file_index.json' relative to root.
+    // But fetchFile logic prepends notes/ if not extension... wait.
+    // Let's use a direct fetch here for simplicity and safety against utils.js logic changes.
+    // Or better, let's use the known path structure.
+
+    const indexUrl = (IS_LOCAL ? '' : '.') + '/posts/file_index.json?v=' + Date.now(); // Cache bust
+    const response = await fetch(indexUrl);
+
+    if (response.ok) {
+      const allFiles = await response.json();
+      const unlistedFiles = allFiles.filter(f => !processedNotes.has(f));
+
+      if (unlistedFiles.length > 0) {
+        console.log('[Dashboard] Found unlisted notes:', unlistedFiles.length);
+        const unlistedPromises = unlistedFiles.map(file => extractNoteFromLink(file));
+        const unlistedNotes = await Promise.all(unlistedPromises);
+        const validUnlisted = unlistedNotes.filter(n => n !== null);
+
+        if (validUnlisted.length > 0) {
+          result.push({
+            title: 'Others', // Section for auto-discovered notes
+            notes: validUnlisted,
+            count: validUnlisted.length
+          });
+        }
+      }
+    } else {
+      console.warn('[Dashboard] file_index.json not found, skipping auto-discovery.');
+    }
+  } catch (e) {
+    console.error('[Dashboard] Auto-discovery failed:', e);
   }
 
   return result;

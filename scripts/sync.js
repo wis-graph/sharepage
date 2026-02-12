@@ -140,6 +140,11 @@ function sync() {
         generateStaticHtml(template, file);
     });
 
+    // Generate file index for auto-dashboard
+    const indexData = JSON.stringify(mdFiles, null, 2);
+    fs.writeFileSync(path.join(POSTS_DIR, 'file_index.json'), indexData);
+    console.log(`[Sync] Generated file_index.json with ${mdFiles.length} entries.`);
+
     console.log(`[Sync] Completed. Generated ${mdFiles.length} HTML files into posts/ directory.`);
 }
 

@@ -1,0 +1,155 @@
+/* Callout Variables */
+:root {
+    --callout-border-width: 0px;
+    --callout-border-opacity: 0.25;
+    --callout-padding: 12px 12px 12px 24px;
+    --callout-radius: 4px;
+    --callout-blend-mode: var(--highlight-mix-blend-mode);
+    --callout-title-color: inherit;
+    --callout-title-padding: 0;
+    --callout-content-padding: 0;
+    --callout-title-size: inherit;
+    --callout-icon-size: 18px;
+    --callout-icon-stroke-width: 2px;
+
+    /* Default Colors (Obsidian Light Mode approx) */
+    --callout-color-note: 8, 109, 221;
+    --callout-color-abstract: 0, 176, 255;
+    --callout-color-info: 0, 184, 212;
+    --callout-color-tip: 0, 191, 165;
+    --callout-color-success: 0, 200, 83;
+    --callout-color-question: 100, 221, 23;
+    --callout-color-warning: 255, 145, 0;
+    --callout-color-failure: 255, 82, 82;
+    --callout-color-danger: 255, 23, 68;
+    --callout-color-bug: 245, 0, 87;
+    --callout-color-example: 124, 77, 255;
+    --callout-color-quote: 158, 158, 158;
+}
+
+body.theme-dark {
+    /* Default Colors (Obsidian Dark Mode approx) */
+    --callout-color-note: 8, 109, 221;
+    --callout-color-abstract: 0, 176, 255;
+    --callout-color-info: 0, 184, 212;
+    --callout-color-tip: 0, 191, 165;
+    --callout-color-success: 0, 200, 83;
+    --callout-color-question: 100, 221, 23;
+    --callout-color-warning: 255, 145, 0;
+    --callout-color-failure: 255, 82, 82;
+    --callout-color-danger: 255, 23, 68;
+    --callout-color-bug: 245, 0, 87;
+    --callout-color-example: 124, 77, 255;
+    --callout-color-quote: 158, 158, 158;
+}
+
+/* Base Callout Style */
+.callout {
+    overflow: hidden;
+    margin: 1em 0;
+    padding: var(--callout-padding);
+    border-radius: var(--callout-radius);
+    border: var(--callout-border-width) solid rgba(var(--callout-color), var(--callout-border-opacity));
+    background-color: rgba(var(--callout-color), 0.1);
+    mix-blend-mode: var(--callout-blend-mode);
+}
+
+.callout-title {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-weight: 600;
+    color: rgb(var(--callout-color));
+    line-height: 1.5;
+    margin-bottom: 0.5em;
+    /* Space between title and content */
+}
+
+/* Icon */
+.callout-icon {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--callout-icon-size);
+    height: var(--callout-icon-size);
+}
+
+.callout-icon svg {
+    width: 100%;
+    height: 100%;
+    stroke-width: var(--callout-icon-stroke-width);
+}
+
+.callout-title-text {
+    flex: 1;
+}
+
+/* Content */
+.callout-content {
+    color: var(--text-normal);
+}
+
+.callout-content> :first-child {
+    margin-top: 0;
+}
+
+.callout-content> :last-child {
+    margin-bottom: 0;
+}
+
+/* Type-specific colors */
+.callout[data-callout="note"] {
+    --callout-color: var(--callout-color-note);
+}
+
+.callout[data-callout="abstract"] {
+    --callout-color: var(--callout-color-abstract);
+}
+
+.callout[data-callout="info"] {
+    --callout-color: var(--callout-color-info);
+}
+
+.callout[data-callout="tip"] {
+    --callout-color: var(--callout-color-tip);
+}
+
+.callout[data-callout="success"] {
+    --callout-color: var(--callout-color-success);
+}
+
+.callout[data-callout="question"] {
+    --callout-color: var(--callout-color-question);
+}
+
+.callout[data-callout="warning"] {
+    --callout-color: var(--callout-color-warning);
+}
+
+.callout[data-callout="failure"] {
+    --callout-color: var(--callout-color-failure);
+}
+
+.callout[data-callout="danger"] {
+    --callout-color: var(--callout-color-danger);
+}
+
+.callout[data-callout="bug"] {
+    --callout-color: var(--callout-color-bug);
+}
+
+.callout[data-callout="example"] {
+    --callout-color: var(--callout-color-example);
+}
+
+.callout[data-callout="quote"] {
+    --callout-color: var(--callout-color-quote);
+}
+
+/* Clean up markdown inside callout */
+.callout-content p {
+    margin-bottom: 0.8em;
+}
+
+/* Nested Callouts (Recursive styling applied automatically via class) */

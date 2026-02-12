@@ -1,4 +1,4 @@
-import { PAGINATION_ITEMS_PER_PAGE } from '../utils.js?v=29001';
+import { PAGINATION_ITEMS_PER_PAGE } from '../utils.js?v=30000';
 
 export function renderPagination(page, totalPages) {
   console.log('[Dashboard] Rendering pagination for page', page, 'of', totalPages);

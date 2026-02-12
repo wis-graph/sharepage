@@ -97,15 +97,21 @@ function generateStaticHtml(template, mdFilename) {
     html = html.replace(/<meta property="og:title" content=".*?">/, `<meta property="og:title" content="${title}">`);
 
     // Update Description
+    // Update Description
     html = html.replace(/<meta name="description" content=".*?">/, `<meta name="description" content="${description}">`);
     html = html.replace(/<meta property="og:description" content=".*?">/, `<meta property="og:description" content="${description}">`);
+
+    const DOMAIN = 'https://wis-graph.github.io/sharepage'; // TODO: Make configurable
+
+    // Update URL
+    const outputFilename = mdFilename.replace(/\.md$/, '.html');
+    const pageUrl = `${DOMAIN}/posts/${encodeURIComponent(outputFilename)}`;
+    html = html.replace(/<meta property="og:url" content=".*?">/, `<meta property="og:url" content="${pageUrl}">`);
 
     // Update Image
     if (ogImage) {
         // Encode it for safety if it's a local file ref
         // OG Image MUST be absolute URL for Kakaotalk/Facebook etc.
-        const DOMAIN = 'https://wis-graph.github.io/sharepage'; // TODO: Make configurable
-
         let finalImage = ogImage.startsWith('http') ? ogImage : ogImage.split('/').map(p => encodeURIComponent(p)).join('/');
 
         if (!finalImage.startsWith('http')) {
@@ -117,7 +123,6 @@ function generateStaticHtml(template, mdFilename) {
         html = html.replace(/<meta property="og:image" content=".*?">/, `<meta property="og:image" content="${finalImage}">`);
     }
 
-    const outputFilename = mdFilename.replace(/\.md$/, '.html');
     fs.writeFileSync(path.join(POSTS_DIR, outputFilename), html);
     console.log(`[Sync] Generated: posts/${outputFilename}`);
 }

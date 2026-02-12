@@ -1,6 +1,6 @@
-import { fetchFile } from './utils.js?v=23000';
-import { loadSectionedDashboard } from './dashboard/dashboardDataExtractor.js?v=23000';
-import { renderSectionedDashboard, renderDashboardControls } from './dashboard/dashboardCardRenderer.js?v=23000';
+import { fetchFile } from './utils.js?v=24000';
+import { loadSectionedDashboard } from './dashboard/dashboardDataExtractor.js?v=24000';
+import { renderSectionedDashboard, renderDashboardControls } from './dashboard/dashboardCardRenderer.js?v=24000';
 
 let dashboardState = {
   dashboardContent: '',

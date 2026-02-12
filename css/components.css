@@ -146,6 +146,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+  margin-top: 4px;
   margin-bottom: 8px;
 }
 
@@ -161,10 +162,10 @@
   transition: all 0.2s ease;
 }
 
-.note-card:hover .note-card-tag-pill {
-  border-color: var(--color-accent-primary);
-  background-color: var(--color-accent-primary);
-  color: white;
+.note-card-tag-pill:hover {
+  border-color: var(--color-text-primary);
+  color: var(--color-text-primary);
+  background-color: var(--color-surface-base);
 }
 
 /* Pagination */

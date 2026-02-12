@@ -28,8 +28,8 @@ export function renderNoteCard(note) {
     <div class="note-card" onclick="window.location.hash='${note.path}'">
       ${thumbnailHtml}
       <div class="note-card-content">
-        ${tagsHtml}
         <div class="note-card-title">${note.title}</div>
+        ${tagsHtml}
         <div class="note-card-preview">${note.description}</div>
         <div class="note-card-footer">
           <span></span>

@@ -1,10 +1,10 @@
-import { fetchFile, transformObsidianImageLinks, transformInternalLinks, parseFrontmatter, getRawUrl } from './utils.js?v=4400';
-import { createTagTicker } from './tag-ticker.js?v=4400';
-import { applySyntaxHighlighting, renderMermaidDiagrams, protectMath, restoreMath, normalizeMermaidAliases, transformYouTubeLinks } from './renderer.js?v=4400';
-import { loadDashboardNotes, renderDashboardPage } from './dashboard.js?v=4400';
-import { addHeadingIds, renderTOC, initScrollHighlight, stopScrollHighlight } from './toc.js?v=4400';
-import { initImageViewer } from './image-viewer.js?v=4400';
-import { initCodeUtils } from './code-utils.js?v=4400';
+import { fetchFile, transformObsidianImageLinks, transformInternalLinks, parseFrontmatter, getRawUrl } from './utils.js?v=4500';
+import { createTagTicker } from './tag-ticker.js?v=4500';
+import { applySyntaxHighlighting, renderMermaidDiagrams, protectMath, restoreMath, normalizeMermaidAliases, transformYouTubeLinks } from './renderer.js?v=4500';
+import { loadDashboardNotes, renderDashboardPage } from './dashboard.js?v=4500';
+import { addHeadingIds, renderTOC, initScrollHighlight, stopScrollHighlight } from './toc.js?v=4500';
+import { initImageViewer } from './image-viewer.js?v=4500';
+import { initCodeUtils } from './code-utils.js?v=4500';
 
 /**
  * Main navigation entry point
@@ -158,7 +158,7 @@ async function processDocument(filename, rawContent) {
       } else if (markdownMatch) {
         // Markdown image found first
         const url = markdownMatch[2];
-        const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=4400)|youtu\.be\/)([^"&?\/\s]{11})/;
+        const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=4500)|youtu\.be\/)([^"&?\/\s]{11})/;
         const ytMatch = url.match(youtubeRegex);
 
         if (ytMatch && ytMatch[1]) {

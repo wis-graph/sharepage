@@ -3,6 +3,11 @@ const path = require('path');
 
 const ROOT_DIR = path.join(__dirname, '..');
 const TEMPLATE_PATH = path.join(ROOT_DIR, 'index.html');
+const NOTES_DIR = path.join(ROOT_DIR, 'notes');
+const POSTS_DIR = path.join(ROOT_DIR, 'posts');
+const IMAGES_DIR = path.join(ROOT_DIR, 'images');
+
+if (!fs.existsSync(POSTS_DIR)) fs.mkdirSync(POSTS_DIR);
 
 /**
  * Basic Frontmatter Parser
@@ -33,7 +38,7 @@ function parseFrontmatter(content) {
  * Generate Static HTML for a markdown file
  */
 function generateStaticHtml(template, mdFilename) {
-    const fullPath = path.join(ROOT_DIR, mdFilename);
+    const fullPath = path.join(NOTES_DIR, mdFilename);
     const content = fs.readFileSync(fullPath, 'utf8');
     const { data, body } = parseFrontmatter(content);
 
@@ -59,7 +64,7 @@ function generateStaticHtml(template, mdFilename) {
         } else if (rawThumbnail.startsWith('http')) {
             ogImage = rawThumbnail;
         } else {
-            ogImage = `_image_${rawThumbnail}`;
+            ogImage = `images/${rawThumbnail}`;
         }
     }
 
@@ -73,7 +78,7 @@ function generateStaticHtml(template, mdFilename) {
                 if (ytMatch && ytMatch[1]) {
                     ogImage = `https://img.youtube.com/vi/${ytMatch[1]}/maxresdefault.jpg`;
                 } else {
-                    ogImage = rawUrl.startsWith('http') ? rawUrl : `_image_${rawUrl}`;
+                    ogImage = rawUrl.startsWith('http') ? rawUrl : `images/${rawUrl}`;
                 }
             }
         }
@@ -93,42 +98,44 @@ function generateStaticHtml(template, mdFilename) {
     // Update Image
     if (ogImage) {
         // Encode it for safety if it's a local file ref
-        const finalImage = ogImage.startsWith('http') ? ogImage : encodeURIComponent(ogImage);
+        const finalImage = ogImage.startsWith('http') ? ogImage : ogImage.split('/').map(p => encodeURIComponent(p)).join('/');
         html = html.replace(/<meta property="og:image" content=".*?">/, `<meta property="og:image" content="${finalImage}">`);
     }
 
     const outputFilename = mdFilename.replace(/\.md$/, '.html');
-    fs.writeFileSync(path.join(ROOT_DIR, outputFilename), html);
-    console.log(`[Sync] Generated: ${outputFilename}`);
+    fs.writeFileSync(path.join(POSTS_DIR, outputFilename), html);
+    console.log(`[Sync] Generated: posts/${outputFilename}`);
 }
 
 /**
  * Main Sync Logic
  */
 function sync() {
-    console.log('[Sync] Starting pre-rendering for SEO/OG support...');
+    console.log('[Sync] Starting pre-rendering (Structured Mode)...');
 
     if (!fs.existsSync(TEMPLATE_PATH)) {
         console.error('[Sync] Error: index.html not found');
         return;
     }
 
+    if (!fs.existsSync(NOTES_DIR)) {
+        console.error('[Sync] Error: notes/ directory not found');
+        return;
+    }
+
     const template = fs.readFileSync(TEMPLATE_PATH, 'utf8');
-    const files = fs.readdirSync(ROOT_DIR);
+    const files = fs.readdirSync(NOTES_DIR);
 
     const mdFiles = files.filter(f =>
         f.endsWith('.md') &&
-        !f.startsWith('_') &&
-        f !== 'task.md' &&
-        f !== 'todo.md' &&
-        f !== 'README.md'
+        !f.startsWith('_')
     );
 
     mdFiles.forEach(file => {
         generateStaticHtml(template, file);
     });
 
-    console.log(`[Sync] Completed. Generated ${mdFiles.length} HTML files.`);
+    console.log(`[Sync] Completed. Generated ${mdFiles.length} HTML files into posts/ directory.`);
 }
 
 sync();

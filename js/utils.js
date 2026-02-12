@@ -12,18 +12,22 @@ export function getRawUrl(filename) {
   if (filename.startsWith('http')) return filename;
 
   let targetFile = filename;
-  // Add .md extension if missing (and not an image or system file)
-  if (!targetFile.includes('.') && !targetFile.startsWith('_image_')) {
-    targetFile += '.md';
+
+  // Logic for routed paths
+  if (targetFile.startsWith('_image_')) {
+    // It's an image: _image_test.jpg -> images/test.jpg
+    targetFile = 'images/' + targetFile.replace('_image_', '');
+  } else if (!targetFile.includes('/') && !targetFile.endsWith('.css') && !targetFile.endsWith('.js')) {
+    // It's a note: welcome -> notes/welcome.md or welcome.md -> notes/welcome.md
+    if (!targetFile.endsWith('.md')) targetFile += '.md';
+    targetFile = 'notes/' + targetFile;
   }
 
-  const encodedFilename = encodeURIComponent(targetFile);
+  const encodedFilename = targetFile.split('/').map(part => encodeURIComponent(part)).join('/');
 
   if (IS_LOCAL) {
-    // Local 'serve' prefers simple filename
     return encodedFilename;
   } else {
-    // GitHub Pages needs explicit relative path './'
     return `./${encodedFilename}`;
   }
 }
@@ -66,8 +70,10 @@ export function transformInternalLinks(html) {
   return html.replace(
     /\[\[(.*?)\]\]/g,
     (match, filename) => {
-      const path = (BASE_PATH || '') + '/' + filename.replace(/\.md$/, '');
-      return `<a href="${path}" class="internal-link">${filename}</a>`;
+      // Internal links in SPA stay clean, router will prefix 'notes/' during fetch
+      const noteName = filename.replace(/\.md$/, '');
+      const path = (BASE_PATH || '') + '/' + noteName;
+      return `<a href="${path}" class="internal-link">${noteName}</a>`;
     }
   );
 }
@@ -78,6 +84,7 @@ export function transformObsidianImageLinks(markdown) {
   return markdown.replace(
     /!\[\[(.*?)\]\]/g,
     (match, filename) => {
+      // transform to standard markdown using images/ folder
       const url = getRawUrl('_image_' + filename);
       return `![${filename}](${url})`;
     }

@@ -109,9 +109,9 @@ function generateStaticHtml(template, mdFilename) {
     const DOMAIN = 'https://wis-graph.github.io/sharepage'; // TODO: Make configurable
 
     // Update URL
-    // We are generating ROOT_DIR/posts/NoteName/index.html to support .../sharepage/posts/NoteName URLs
+    // We are generating ROOT_DIR/posts/NoteName.html to support .../sharepage/posts/NoteName.html URLs
     const urlSlug = mdFilename.replace(/\.md$/, '');
-    const pageUrl = `${DOMAIN}/posts/${encodeURIComponent(urlSlug)}`;
+    const pageUrl = `${DOMAIN}/posts/${encodeURIComponent(urlSlug)}.html`;
     html = html.replace(/<meta property="og:url" content=".*?">/, `<meta property="og:url" content="${pageUrl}">`);
 
     // Update Image
@@ -129,32 +129,28 @@ function generateStaticHtml(template, mdFilename) {
         html = html.replace(/<meta property="og:image" content=".*?">/, `<meta property="og:image" content="${finalImage}">`);
     }
 
-    // Generate Directory-based Static File (Pre-rendering)
-    // Structure: /posts/Note Name/index.html
-    // This allows .../sharepage/posts/Note%20Name to resolve to 200 OK index.html
-    const dirName = mdFilename.replace(/\.md$/, '');
+    // Generate Static HTML File (Pre-rendering)
+    // Structure: /posts/NoteName.html (flat structure)
+    // This allows .../sharepage/posts/NoteName.html to work reliably
+    const fileName = mdFilename.replace(/\.md$/, '.html');
 
-    // Skip if dirname conflicts with system folders
-    const RESERVED = ['css', 'js', 'images', 'notes', 'posts', 'scripts', '.git', '.github', 'node_modules'];
-    if (RESERVED.includes(dirName)) {
-        console.warn(`[Sync] Skipping reserved directory name: ${dirName}`);
+    // Skip if filename conflicts with system files
+    const RESERVED = ['file_index.html'];
+    if (RESERVED.includes(fileName)) {
+        console.warn(`[Sync] Skipping reserved filename: ${fileName}`);
         return;
     }
 
-    const outputDir = path.join(ROOT_DIR, 'posts', dirName);
-    if (!fs.existsSync(outputDir)) {
-        fs.mkdirSync(outputDir, { recursive: true });
+    const postsDir = path.join(ROOT_DIR, 'posts');
+    if (!fs.existsSync(postsDir)) {
+        fs.mkdirSync(postsDir, { recursive: true });
     }
 
-    // Fix relative paths for resources since we are TWO levels deep (posts/NoteName/)
-    let subHtml = html;
-    subHtml = subHtml.replace(/href="css\//g, 'href="../../css/');
-    subHtml = subHtml.replace(/src="js\//g, 'src="../../js/');
-    subHtml = subHtml.replace(/href="images\//g, 'href="../../images/');
-    subHtml = subHtml.replace(/src="images\//g, 'src="../../images/');
+    // No need to fix paths - we're at the same level as root
+    // posts/NoteName.html can access ../css/, ../js/, etc. just like root index.html
 
-    fs.writeFileSync(path.join(outputDir, 'index.html'), subHtml);
-    console.log(`[Sync] Generated: posts/${dirName}/index.html`);
+    fs.writeFileSync(path.join(postsDir, fileName), html);
+    console.log(`[Sync] Generated: posts/${fileName}`);
 }
 
 /**

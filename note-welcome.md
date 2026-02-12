@@ -80,3 +80,34 @@ Here's a test image:
 
 ### PNG Image
 ![[logo.png]]
+
+## Mermaid Diagram Support
+
+Here is a mermaid diagram to test rendering:
+
+```mermaid
+graph TD
+    A[Start] --> B{Is it working?}
+    B -- Yes --> C[Great!]
+    B -- No --> D[Debug renderer.js]
+```
+
+## Mathematical Formula Support (KaTeX)
+
+Here are some math formulas to test Obsidian compatibility:
+
+- **Inline Math**: The quadratic formula is $x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$.
+- **Block Math**:
+$$
+e^{i\pi} + 1 = 0
+$$
+
+Another example with multiple lines:
+$$
+\begin{aligned}
+\nabla \cdot \mathbf{E} &= \frac{\rho}{\varepsilon_0} \\
+\nabla \cdot \mathbf{B} &= 0 \\
+\nabla \times \mathbf{E} &= -\frac{\partial \mathbf{B}}{\partial t} \\
+\nabla \times \mathbf{B} &= \mu_0\left(\mathbf{J} + \varepsilon_0\frac{\partial \mathbf{E}}{\partial t}\right)
+\end{aligned}
+$$

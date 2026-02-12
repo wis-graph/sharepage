@@ -205,8 +205,19 @@ export function initTOCToggle() {
     return { success: false, reason: 'Elements not found' };
   }
 
-  toggle.addEventListener('click', () => {
+  toggle.addEventListener('click', (e) => {
+    e.stopPropagation();
     sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar when clicking outside (on backdrop or document)
+  document.addEventListener('click', (e) => {
+    if (window.innerWidth <= 768 &&
+      sidebar.classList.contains('open') &&
+      !sidebar.contains(e.target) &&
+      e.target !== toggle) {
+      sidebar.classList.remove('open');
+    }
   });
 
   return { success: true };

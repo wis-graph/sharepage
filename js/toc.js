@@ -145,7 +145,7 @@ function highlightActiveTOCItem(id) {
     link.classList.remove('active');
     if (link.dataset.target === id) {
       link.classList.add('active');
-      link.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      // Removed scrollIntoView to prevent stealing focus from main content
     }
   });
 }

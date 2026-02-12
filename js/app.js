@@ -32,6 +32,7 @@ function toggleTheme() {
 function handleHashChange() {
   const hash = window.location.hash.slice(1) || '/';
   console.log('[Router] Hash changed:', hash);
+  window.scrollTo(0, 0);
   navigate(hash);
 }
 

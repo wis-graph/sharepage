@@ -29,6 +29,7 @@ export async function navigate(hash) {
 
     const html = renderDashboardPage(1);
     document.getElementById('app').innerHTML = html;
+    window.scrollTo(0, 0);
   } else {
     const route = routes[hash];
 

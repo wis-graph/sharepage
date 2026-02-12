@@ -65,14 +65,14 @@
 
 /* Main Layout */
 .main-layout {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
   margin-top: 80px;
   padding: 0 var(--space-3) var(--space-6);
   gap: var(--space-4);
 }
 
 .content-wrapper {
+  flex: 1;
   max-width: 1440px;
   margin: 0 auto;
 }

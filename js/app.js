@@ -50,7 +50,12 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  mermaid.initialize({ startOnLoad: false, theme: 'default' });
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: 'default',
+    securityLevel: 'loose',
+    fontFamily: 'inherit'
+  });
 
   initTheme();
   document.getElementById('theme-toggle').addEventListener('click', toggleTheme);

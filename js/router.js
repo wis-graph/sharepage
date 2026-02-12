@@ -66,9 +66,15 @@ export async function navigate(hash) {
 
         document.getElementById('app').innerHTML = `<div class="document-container markdown">${html}</div>`;
 
-        await mermaid.run({
-          nodes: document.querySelectorAll('.mermaid')
-        });
+        const mermaidElements = document.querySelectorAll('.mermaid');
+        console.log('[Router] Found mermaid elements:', mermaidElements.length);
+
+        if (mermaidElements.length > 0) {
+          await mermaid.run({
+            querySelector: '.mermaid'
+          });
+          console.log('[Router] Mermaid rendering complete');
+        }
 
         renderTOC();
         initScrollHighlight();

@@ -142,6 +142,31 @@
   font-weight: 500;
 }
 
+.note-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.note-card-tag-pill {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-meta);
+  background-color: var(--color-surface-muted);
+  padding: 1px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--color-border-default);
+  transition: all 0.2s ease;
+}
+
+.note-card:hover .note-card-tag-pill {
+  border-color: var(--color-accent-primary);
+  background-color: var(--color-accent-primary);
+  color: white;
+}
+
 /* Pagination */
 .pagination {
   display: flex;
@@ -198,59 +223,29 @@
   transform: translateX(-4px);
 }
 
-/* Tag Ticker */
-.tag-ticker-container {
-  width: calc(100% + 48px);
-  margin-left: -24px;
-  height: 32px;
-  background: linear-gradient(to right, #3b82f6 0%, #2563eb 100%);
-  overflow: hidden;
+/* Tag Pills (Document View) */
+.tag-pills-container {
   display: flex;
-  align-items: center;
-  position: relative;
-  margin-top: var(--space-4);
-  margin-bottom: var(--space-8);
-  transform: skewX(-10deg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  z-index: 5;
-  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  margin-bottom: 32px;
 }
 
-.tag-ticker-track {
-  display: flex;
-  align-items: center;
-  white-space: nowrap;
-  animation: scroll-left 60s linear infinite;
-  will-change: transform;
+.tag-pill {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-meta);
+  background-color: var(--color-surface-muted);
+  padding: 4px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--color-border-default);
+  transition: all 0.2s ease;
 }
 
-@keyframes scroll-left {
-  from {
-    transform: translateX(0);
-  }
-
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-.ticker-tag {
-  font-family: 'SF Mono', SFMono-Regular, ui-monospace, monospace;
-  font-size: 11px;
-  font-weight: 800;
-  color: #ffffff;
-  padding: 0 32px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  letter-spacing: 0.15em;
-  transform: skewX(10deg);
-}
-
-.ticker-dot {
-  width: 4px;
-  height: 4px;
-  background-color: white;
-  border-radius: 50%;
-  opacity: 0.6;
+.tag-pill:hover {
+  border-color: var(--color-accent-primary);
+  color: var(--color-accent-primary);
+  background-color: var(--color-surface-base);
 }

@@ -18,14 +18,21 @@ export function renderNoteThumbnail(note) {
 export function renderNoteCard(note) {
   const thumbnailHtml = renderNoteThumbnail(note);
 
+  const tagsHtml = note.tags && note.tags.length > 0
+    ? `<div class="note-card-tags">
+        ${note.tags.map(tag => `<span class="note-card-tag-pill">#${tag}</span>`).join('')}
+       </div>`
+    : '';
+
   return `
     <div class="note-card" onclick="window.location.hash='${note.path}'">
       ${thumbnailHtml}
       <div class="note-card-content">
+        ${tagsHtml}
         <div class="note-card-title">${note.title}</div>
         <div class="note-card-preview">${note.description}</div>
         <div class="note-card-footer">
-          <span class="note-card-tag">Note</span>
+          <span></span>
           <span>Read →</span>
         </div>
       </div>

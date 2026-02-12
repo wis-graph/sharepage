@@ -1,7 +1,6 @@
-import { fetchFile } from './utils.js?v=4300';
-import { loadSectionedDashboard } from './dashboard/dashboardDataExtractor.js?v=4300';
-import { renderSectionedDashboard } from './dashboard/dashboardCardRenderer.js?v=4300';
-import { createTagTicker } from './tag-ticker.js?v=4300';
+import { fetchFile } from './utils.js?v=4400';
+import { loadSectionedDashboard } from './dashboard/dashboardDataExtractor.js?v=4400';
+import { renderSectionedDashboard } from './dashboard/dashboardCardRenderer.js?v=4400';
 
 let dashboardState = {
   dashboardContent: '',
@@ -40,21 +39,10 @@ export async function renderDashboardPage() {
     return '<div class="loading">No notes linked in _dashboard.md yet.</div>';
   }
 
-  // Collect all unique tags for global ticker
-  const allTags = new Set();
-  sections.forEach(section => {
-    section.notes.forEach(note => {
-      if (note.tags) {
-        note.tags.forEach(tag => allTags.add(tag));
-      }
-    });
-  });
-
-  const tickerHtml = createTagTicker(Array.from(allTags));
   const sectionsHtml = renderSectionedDashboard(sections);
 
   console.log('[Dashboard] Rendering sectioned dashboard END');
-  return tickerHtml + sectionsHtml;
+  return sectionsHtml;
 }
 
 // Redirect goToPage to a no-op if called (pagination removed for sectioned view)

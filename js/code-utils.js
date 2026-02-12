@@ -2,7 +2,7 @@
  * ShareHub Code Utilities Module
  * Handles copy-to-clipboard for code blocks and mermaid diagrams.
  */
-import { openLightbox } from './image-viewer.js?v=32000';
+import { openLightbox } from './image-viewer.js?v=32001';
 
 export function initCodeUtils() {
     attachCodeCopyButtons();

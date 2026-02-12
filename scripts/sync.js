@@ -109,9 +109,9 @@ function generateStaticHtml(template, mdFilename) {
     const DOMAIN = 'https://wis-graph.github.io/sharepage'; // TODO: Make configurable
 
     // Update URL
-    // We are generating ROOT_DIR/NoteName/index.html to support .../sharepage/NoteName URLs
+    // We are generating ROOT_DIR/posts/NoteName/index.html to support .../sharepage/posts/NoteName URLs
     const urlSlug = mdFilename.replace(/\.md$/, '');
-    const pageUrl = `${DOMAIN}/${encodeURIComponent(urlSlug)}`;
+    const pageUrl = `${DOMAIN}/posts/${encodeURIComponent(urlSlug)}`;
     html = html.replace(/<meta property="og:url" content=".*?">/, `<meta property="og:url" content="${pageUrl}">`);
 
     // Update Image
@@ -130,8 +130,8 @@ function generateStaticHtml(template, mdFilename) {
     }
 
     // Generate Directory-based Static File (Pre-rendering)
-    // Structure: /Note Name/index.html
-    // This allows .../sharepage/Note%20Name to resolve to 200 OK index.html
+    // Structure: /posts/Note Name/index.html
+    // This allows .../sharepage/posts/Note%20Name to resolve to 200 OK index.html
     const dirName = mdFilename.replace(/\.md$/, '');
 
     // Skip if dirname conflicts with system folders
@@ -141,20 +141,20 @@ function generateStaticHtml(template, mdFilename) {
         return;
     }
 
-    const outputDir = path.join(ROOT_DIR, dirName);
+    const outputDir = path.join(ROOT_DIR, 'posts', dirName);
     if (!fs.existsSync(outputDir)) {
         fs.mkdirSync(outputDir, { recursive: true });
     }
 
-    // Fix relative paths for resources since we are one level deep
+    // Fix relative paths for resources since we are TWO levels deep (posts/NoteName/)
     let subHtml = html;
-    subHtml = subHtml.replace(/href="css\//g, 'href="../css/');
-    subHtml = subHtml.replace(/src="js\//g, 'src="../js/');
-    subHtml = subHtml.replace(/href="images\//g, 'href="../images/');
-    subHtml = subHtml.replace(/src="images\//g, 'src="../images/');
+    subHtml = subHtml.replace(/href="css\//g, 'href="../../css/');
+    subHtml = subHtml.replace(/src="js\//g, 'src="../../js/');
+    subHtml = subHtml.replace(/href="images\//g, 'href="../../images/');
+    subHtml = subHtml.replace(/src="images\//g, 'src="../../images/');
 
     fs.writeFileSync(path.join(outputDir, 'index.html'), subHtml);
-    console.log(`[Sync] Generated: ${dirName}/index.html`);
+    console.log(`[Sync] Generated: posts/${dirName}/index.html`);
 }
 
 /**

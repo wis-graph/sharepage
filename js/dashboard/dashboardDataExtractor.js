@@ -1,4 +1,4 @@
-import { fetchFile, getRawUrl, transformObsidianImageLinks, parseFrontmatter } from '../utils.js?v=4500';
+import { fetchFile, getRawUrl, transformObsidianImageLinks, parseFrontmatter } from '../utils.js?v=4600';
 
 /**
  * Extracts links grouped by sections based on ## Headings
@@ -105,7 +105,7 @@ function extractThumbnail(content, metadata) {
     const url = markdownMatch[2];
 
     // Check if it's a YouTube URL
-    const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=4500)|youtu\.be\/)([^"&?\/\s]{11})/;
+    const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=4600)|youtu\.be\/)([^"&?\/\s]{11})/;
     const ytMatch = url.match(youtubeRegex);
 
     if (ytMatch && ytMatch[1]) {

@@ -31,10 +31,6 @@ export function renderNoteCard(note) {
         <div class="note-card-title">${note.title}</div>
         ${tagsHtml}
         <div class="note-card-preview">${note.description}</div>
-        <div class="note-card-footer">
-          <span></span>
-          <span>Read →</span>
-        </div>
       </div>
     </div>
   `;

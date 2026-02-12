@@ -246,6 +246,14 @@
   color: #ef4444;
 }
 
+/* Fix for code inside bold: keep bold background, keep code font/color */
+.markdown strong code {
+  background-color: transparent !important;
+  color: #ff808b !important;
+  /* Lighter red for better contrast on dark bold background */
+  padding: 0;
+}
+
 .markdown pre {
   background-color: #0d1117;
   padding: var(--space-3);

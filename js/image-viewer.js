@@ -66,6 +66,7 @@ export function openLightbox(src, isDiagram = false) {
     modal._handleEsc = handleEsc;
 }
 
+
 function createModal() {
     const modal = document.createElement('div');
     modal.id = 'image-viewer-modal';
@@ -83,7 +84,7 @@ function createModal() {
 
     const hint = document.createElement('div');
     hint.className = 'image-viewer-hint';
-    hint.textContent = 'Wheel to zoom • Drag to pan';
+    hint.textContent = 'Cmd/Ctrl + Scroll to zoom • Two fingers to pan';
 
     container.appendChild(img);
     modal.appendChild(container);
@@ -94,50 +95,63 @@ function createModal() {
     // Event: Close
     closeBtn.onclick = closeModal;
     modal.onclick = (e) => {
-        if (e.target === modal || e.target === container) closeModal();
+        if (e.target === modal) closeModal();
     };
 
-    // Event: Zoom (Wheel)
-    container.onwheel = (e) => {
+    // Event: Zoom (Wheel) & Pan (Trackpad)
+    container.addEventListener('wheel', (e) => {
         e.preventDefault();
-        const delta = e.deltaY > 0 ? -0.2 : 0.2;
-        const newScale = Math.min(Math.max(currentScale + delta, 0.5), 10);
-        currentScale = newScale;
-        updateTransform(img);
-    };
 
-    // Event: Pan (Drag)
-    container.onmousedown = (e) => {
+        if (e.ctrlKey || e.metaKey) {
+            // Zoom
+            const delta = e.deltaY > 0 ? -0.1 : 0.1;
+            const newScale = Math.min(Math.max(currentScale + delta, 0.5), 5);
+            currentScale = Number(newScale.toFixed(2));
+        } else {
+            // Pan (Trackpad or Mouse Wheel)
+            moveX -= e.deltaX;
+            moveY -= e.deltaY;
+        }
+        updateTransform(img);
+    }, { passive: false });
+
+    // Event: Pan (Drag - Mouse)
+    container.addEventListener('mousedown', (e) => {
         isDragging = true;
         startX = e.clientX - moveX;
         startY = e.clientY - moveY;
         container.style.cursor = 'grabbing';
-    };
+    });
 
-    window.onmousemove = (e) => {
-        if (!isDragging) return;
-        moveX = e.clientX - startX;
-        moveY = e.clientY - startY;
-        updateTransform(img);
-    };
-
-    window.onmouseup = () => {
-        isDragging = false;
-        if (container) container.style.cursor = 'grab';
-    };
+    // We attach these to window but need to manage cleanup to avoid leaks if valid
+    // For simplicity in this module context, we attach to window and rely on isDragging flag
+    // A better approach for SPA is to attach/detach on open/close.
 
     return modal;
 }
 
-function updateTransform(img) {
-    img.style.transform = `translate(${moveX}px, ${moveY}px) scale(${currentScale})`;
-}
-
-function closeModal() {
+// ... helper to attach/detach global listeners
+const handleDragMove = (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    moveX = e.clientX - startX;
+    moveY = e.clientY - startY;
     const modal = document.getElementById('image-viewer-modal');
     if (modal) {
-        modal.classList.remove('open');
-        document.body.style.overflow = '';
-        window.removeEventListener('keydown', modal._handleEsc);
+        const img = modal.querySelector('img');
+        if (img) updateTransform(img);
     }
-}
+};
+
+const handleDragEnd = () => {
+    isDragging = false;
+    const modal = document.getElementById('image-viewer-modal');
+    if (modal) {
+        const container = modal.querySelector('.image-viewer-container');
+        if (container) container.style.cursor = 'grab';
+    }
+};
+
+// Initialize listeners once
+window.addEventListener('mousemove', handleDragMove);
+window.addEventListener('mouseup', handleDragEnd);

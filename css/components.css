@@ -33,24 +33,38 @@
 }
 
 .dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  justify-content: center;
-  /* Center cards if they don't fill the row */
+  display: flex;
+  overflow-x: auto;
   gap: 0;
   border: none;
   /* Increase padding to ensure borders are not clipped on any side */
   padding: 6px;
   max-width: 100%;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  /* Hide scrollbar */
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE/Edge */
 }
 
+.dashboard-grid::-webkit-scrollbar {
+  display: none;
+  /* Chrome/Safari */
+}
 
 .note-card {
+  min-width: 300px;
+  /* Fixed width for horizontal scrolling */
+  max-width: 300px;
+  scroll-snap-align: start;
   background-color: var(--color-surface-base);
   /* Apply bold border to all sides */
   border: 3px solid var(--color-border-strong);
   /* Collapse borders by overlapping them */
-  margin: -3px 0 0 -3px;
+  margin-right: -3px;
+  /* Only overlap right border in horizontal layout */
   border-radius: var(--radius-none);
   overflow: hidden;
   cursor: pointer;

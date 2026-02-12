@@ -73,7 +73,7 @@ export async function navigate(hash) {
 
       document.getElementById('app').innerHTML = `
           <div class="document-container markdown">
-            <h1 class="document-title">${docTitle}</h1>
+            <div class="document-title">${docTitle}</div>
             ${tickerHtml}
             ${html}
           </div>

@@ -5,6 +5,25 @@
   /* Huge bottom padding to support TOC tracking */
 }
 
+/* Document Title (Hero Style) */
+.document-title {
+  font-size: 3rem;
+  /* Larger than typical H1 */
+  font-weight: 900;
+  margin-top: 0;
+  margin-bottom: var(--space-2);
+  line-height: 1.1;
+  letter-spacing: -0.05em;
+  background: linear-gradient(to right, var(--color-text-primary) 0%, var(--color-text-meta) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  /* Explicitly remove H1 pseudo-elements if any inherited, though div is safe */
+  position: relative;
+  border-bottom: none;
+  padding-left: 0;
+}
+
 .loading,
 .error {
   text-align: center;

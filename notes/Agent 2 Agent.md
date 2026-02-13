@@ -7,11 +7,11 @@ channel: Google Cloud Tech
 author: Holt Skinner
 status: 🌲 Permanent Note
 tags:
-* "#Knowledge_Management"
-* "#AI_Agents"
-* "#A2A_Protocol"
-* "#Interoperability"
-* "#Google_Cloud"
+    - "#Knowledge_Management"
+    - "#AI_Agents"
+    - "#A2A_Protocol"
+    - "#Interoperability"
+    - "#Google_Cloud"
 ---
 
 # 📑 Google A2A 프로토콜: 멀티 에이전트 협업의 표준

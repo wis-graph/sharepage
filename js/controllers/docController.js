@@ -1,0 +1,100 @@
+/**
+ * Document Controller
+ * Coordinates document loading, processing, and rendering
+ */
+
+import { fetchFile } from '../core/fileApi.js?v=41000';
+import { processDocument } from '../services/docService.js?v=41000';
+import { renderDocumentView, renderError, renderLoading, prepareLayout } from '../views/docView.js?v=41000';
+import { initImageViewer } from '../image-viewer.js?v=41000';
+import { initCodeUtils } from '../code-utils.js?v=41000';
+import { initLinkPreviews } from '../preview.js?v=41000';
+import { renderTOC, initScrollHighlight } from '../toc.js?v=41000';
+import { initScrollAnimations } from '../animations.js?v=41000';
+import { loadDashboardNotes, renderDashboardPage } from '../dashboard.js?v=41000';
+import { initDashboardAnimations } from '../animations.js?v=41000';
+
+/**
+ * Handles individual document route logic
+ * @param {string} filename 
+ */
+export async function handleDocumentRoute(filename) {
+    prepareLayout({ isDashboard: false });
+    renderLoading('Loading Content');
+    document.title = `${filename} - SharePage`;
+    console.log('[DocController] Loading document:', filename);
+
+    try {
+        const rawContent = await fetchFile(filename);
+
+        // Process content (Service Layer)
+        const processedDoc = await processDocument(filename, rawContent);
+
+        // Render View (View Layer)
+        renderDocumentView(
+            processedDoc.title,
+            processedDoc.tags,
+            processedDoc.html,
+            processedDoc.metadata
+        );
+
+        // Post-render initializations
+        await initPostRenderScripts();
+
+    } catch (error) {
+        renderError(filename, error);
+    }
+}
+
+/**
+ * Handles the dashboard route logic
+ */
+export async function handleDashboardRoute() {
+    prepareLayout({ isDashboard: true });
+    renderLoading('Loading Dashboard');
+    document.title = 'Dashboard - SharePage';
+    console.log('[DocController] Loading dashboard');
+
+    try {
+        await loadDashboardNotes();
+        const html = await renderDashboardPage(1);
+
+        const app = document.getElementById('app');
+        if (app) {
+            app.innerHTML = html;
+            window.scrollTo(0, 0);
+            initDashboardAnimations();
+        }
+    } catch (error) {
+        renderError('Dashboard', error);
+    }
+}
+
+/**
+ * Initializes utilities that need the DOM to be ready
+ */
+async function initPostRenderScripts() {
+    initImageViewer();
+    initCodeUtils();
+    initLinkPreviews();
+
+    // Initialize Mermaid
+    const mermaidElements = document.querySelectorAll('.mermaid');
+    if (mermaidElements.length > 0 && typeof mermaid !== 'undefined') {
+        try {
+            await mermaid.run({ querySelector: '.mermaid' });
+            console.log('[DocController] Mermaid rendered');
+        } catch (e) {
+            console.warn('[DocController] Mermaid error:', e);
+        }
+    }
+
+    // Initialize TOC
+    renderTOC();
+    initScrollHighlight();
+
+    // Initialize scroll animations
+    initScrollAnimations();
+
+    console.log('[DocController] Content fully rendered');
+}

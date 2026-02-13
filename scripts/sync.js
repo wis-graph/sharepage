@@ -146,10 +146,14 @@ function generateStaticHtml(template, mdFilename) {
         fs.mkdirSync(postsDir, { recursive: true });
     }
 
-    // No need to fix paths - we're at the same level as root
-    // posts/NoteName.html can access ../css/, ../js/, etc. just like root index.html
+    // Fix relative paths for resources since we are one level deep (posts/)
+    let staticHtml = html;
+    staticHtml = staticHtml.replace(/href="css\//g, 'href="../css/');
+    staticHtml = staticHtml.replace(/src="js\//g, 'src="../js/');
+    staticHtml = staticHtml.replace(/href="images\//g, 'href="../images/');
+    staticHtml = staticHtml.replace(/src="images\//g, 'src="../images/');
 
-    fs.writeFileSync(path.join(postsDir, fileName), html);
+    fs.writeFileSync(path.join(postsDir, fileName), staticHtml);
     console.log(`[Sync] Generated: posts/${fileName}`);
 }
 

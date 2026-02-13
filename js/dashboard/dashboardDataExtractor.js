@@ -1,6 +1,7 @@
 // Migrated to use new layered modules
-import { fetchFile, getRawUrl, transformObsidianImageLinks, parseFrontmatter } from '../utils.js?v=40000';
+import { fetchFile, getRawUrl } from '../utils.js?v=40000';
 import { getNotePath } from '../services/pathService.js?v=40000';
+import { transformObsidianImageLinks, parseFrontmatter } from '../services/markdownService.js?v=40000';
 
 /**
  * Extracts links grouped by sections based on ## Headings

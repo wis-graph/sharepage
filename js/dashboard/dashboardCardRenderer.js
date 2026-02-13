@@ -1,5 +1,5 @@
-import { prefetchFile, BASE_PATH, IS_LOCAL } from '../utils.js?v=39000';
-import { navigate } from '../router.js?v=39000';
+import { prefetchFile, BASE_PATH, IS_LOCAL } from '../utils.js?v=40000';
+import { navigate } from '../router.js?v=40000';
 
 const PREMIUM_GRADIENTS = [
   'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -84,7 +84,9 @@ window.handleCardClick = (path, el) => {
   if (title) title.style.viewTransitionName = 'active-note-expand';
 
   const navigateTo = () => {
-    const finalPath = (BASE_PATH || '') + (path.startsWith('/') ? '' : '/') + path;
+    // path already includes BASE_PATH from getNotePath
+    // Just ensure it starts with /
+    const finalPath = path.startsWith('/') ? path : '/' + path;
 
     history.pushState(null, '', finalPath);
     navigate(finalPath);

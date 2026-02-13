@@ -1,13 +1,13 @@
-import { fetchFile, transformObsidianImageLinks, transformInternalLinks, parseFrontmatter, getRawUrl, BASE_PATH, IS_LOCAL, parseNotePath, getNotePath } from './utils.js?v=39000';
-import { createTagTicker } from './tag-ticker.js?v=39000';
-import { applySyntaxHighlighting, renderMermaidDiagrams, protectMath, restoreMath, normalizeMermaidAliases, transformYouTubeLinks } from './renderer.js?v=39000';
-import { loadDashboardNotes, renderDashboardPage } from './dashboard.js?v=39000';
-import { addHeadingIds, renderTOC, initScrollHighlight, stopScrollHighlight } from './toc.js?v=39000';
-import { initImageViewer } from './image-viewer.js?v=39000';
-import { initCodeUtils } from './code-utils.js?v=39000';
-import { initLinkPreviews } from './preview.js?v=39000';
-import { transformCallouts } from './callouts.js?v=39000';
-import { initScrollAnimations, cleanupScrollAnimations, initDashboardAnimations, cleanupDashboardAnimations } from './animations.js?v=39000';
+import { fetchFile, transformObsidianImageLinks, transformInternalLinks, parseFrontmatter, getRawUrl, BASE_PATH, IS_LOCAL, parseNotePath, getNotePath } from './utils.js?v=40000';
+import { createTagTicker } from './tag-ticker.js?v=40000';
+import { applySyntaxHighlighting, renderMermaidDiagrams, protectMath, restoreMath, normalizeMermaidAliases, transformYouTubeLinks } from './renderer.js?v=40000';
+import { loadDashboardNotes, renderDashboardPage } from './dashboard.js?v=40000';
+import { addHeadingIds, renderTOC, initScrollHighlight, stopScrollHighlight } from './toc.js?v=40000';
+import { initImageViewer } from './image-viewer.js?v=40000';
+import { initCodeUtils } from './code-utils.js?v=40000';
+import { initLinkPreviews } from './preview.js?v=40000';
+import { transformCallouts } from './callouts.js?v=40000';
+import { initScrollAnimations, cleanupScrollAnimations, initDashboardAnimations, cleanupDashboardAnimations } from './animations.js?v=40000';
 
 /**
  * Main navigation entry point
@@ -15,6 +15,14 @@ import { initScrollAnimations, cleanupScrollAnimations, initDashboardAnimations,
  */
 export async function navigate(rawPath) {
   console.log('[Router] Navigating to:', rawPath, '(Base:', BASE_PATH, ')');
+
+  // Detect and fix malformed paths with duplicate BASE_PATH
+  if (BASE_PATH && rawPath.includes(BASE_PATH + BASE_PATH)) {
+    const correctPath = rawPath.replace(BASE_PATH + BASE_PATH, BASE_PATH);
+    console.warn(`[Router] Malformed path detected: ${rawPath}, redirecting to ${correctPath}`);
+    history.replaceState(null, '', correctPath);
+    return navigate(correctPath);
+  }
 
   // Normalize path by removing BASE_PATH if present
   let path = rawPath;

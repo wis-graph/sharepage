@@ -36,7 +36,9 @@ export function parseNotePath(urlPath) {
     if (path.endsWith('.html')) path = path.slice(0, -5);
 
     if (path.startsWith(PATHS.NOTE_PREFIX + '/')) {
-        return path.slice(PATHS.NOTE_PREFIX.length + 1);
+        // Decode the path to handle Korean/special characters
+        const noteName = path.slice(PATHS.NOTE_PREFIX.length + 1);
+        return decodeURIComponent(noteName);
     }
 
     return null;

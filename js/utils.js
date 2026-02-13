@@ -56,7 +56,9 @@ export function parseNotePath(urlPath) {
 
   // Check if it starts with posts/
   if (path.startsWith(NOTE_PATH_PREFIX + '/')) {
-    return path.slice(NOTE_PATH_PREFIX.length + 1); // Remove "posts/"
+    // Decode the path to handle Korean/special characters
+    const noteName = path.slice(NOTE_PATH_PREFIX.length + 1);
+    return decodeURIComponent(noteName);
   }
 
   return null;

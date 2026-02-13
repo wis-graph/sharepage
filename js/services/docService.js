@@ -12,7 +12,7 @@ import {
     restoreMath,
     normalizeMermaidAliases,
     transformYouTubeLinks
-} from '../renderer.js?v=41000';
+} from './renderService.js?v=41000';
 import { transformCallouts } from '../callouts.js?v=41000';
 import { addHeadingIds } from '../toc.js?v=41000';
 

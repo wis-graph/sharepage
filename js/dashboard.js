@@ -5,8 +5,13 @@ import {
   getDashboardContent,
   setDashboardSections,
   getDashboardSections,
+  setAllTags,
+  getAllTags,
+  setSearchQuery,
   getSearchQuery,
-  getActiveTags
+  getActiveTags,
+  addActiveTag,
+  removeActiveTag
 } from './state/appState.js?v=40000';
 import { loadSectionedDashboard } from './dashboard/dashboardDataExtractor.js?v=40000';
 import { renderSectionedDashboard, renderDashboardControls } from './dashboard/dashboardCardRenderer.js?v=40000';
@@ -55,6 +60,7 @@ export async function renderDashboardPage() {
 
   // Update State
   setDashboardSections(sections);
+  setAllTags(Array.from(allTags).sort());
 
   return renderFullDashboard();
 }
@@ -101,9 +107,9 @@ function renderFullDashboard() {
   );
 
   const controlsHtml = renderDashboardControls(
-    dashboardState.allTags,
-    dashboardState.activeTags,
-    dashboardState.searchQuery
+    getAllTags(),
+    getActiveTags(),
+    getSearchQuery()
   );
 
   if (filteredSections.length === 0) {
@@ -126,15 +132,15 @@ function renderFullDashboard() {
 
 // Global Event Handlers
 window.onDashboardSearch = (value) => {
-  dashboardState.searchQuery = value;
+  setSearchQuery(value);
 
   const app = document.getElementById('app');
   if (!app) return;
 
   const filteredSections = filterSections(
-    dashboardState.sections,
-    dashboardState.searchQuery,
-    dashboardState.activeTags
+    getDashboardSections(),
+    getSearchQuery(),
+    getActiveTags()
   );
 
   let contentHtml = '';
@@ -174,11 +180,12 @@ window.onDashboardSearch = (value) => {
 };
 
 window.onDashboardTagToggle = (tag) => {
-  const index = dashboardState.activeTags.indexOf(tag);
+  const activeTags = getActiveTags();
+  const index = activeTags.indexOf(tag);
   if (index === -1) {
-    dashboardState.activeTags.push(tag);
+    addActiveTag(tag);
   } else {
-    dashboardState.activeTags.splice(index, 1);
+    removeActiveTag(tag);
   }
 
   const app = document.getElementById('app');

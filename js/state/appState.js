@@ -7,6 +7,7 @@
 const dashboardState = {
     dashboardContent: '',
     sections: [],
+    allTags: [],
     searchQuery: '',
     activeTags: new Set(),
     currentPage: 1
@@ -49,6 +50,14 @@ export function getDashboardSections() {
     return dashboardState.sections;
 }
 
+export function setAllTags(tags) {
+    dashboardState.allTags = tags;
+}
+
+export function getAllTags() {
+    return dashboardState.allTags;
+}
+
 export function setSearchQuery(query) {
     dashboardState.searchQuery = query;
 }
@@ -63,6 +72,14 @@ export function toggleTag(tag) {
     } else {
         dashboardState.activeTags.add(tag);
     }
+}
+
+export function addActiveTag(tag) {
+    dashboardState.activeTags.add(tag);
+}
+
+export function removeActiveTag(tag) {
+    dashboardState.activeTags.delete(tag);
 }
 
 export function getActiveTags() {

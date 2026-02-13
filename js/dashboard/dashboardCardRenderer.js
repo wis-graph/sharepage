@@ -1,7 +1,7 @@
 // Migrated to use new layered modules
-import { BASE_PATH, IS_LOCAL } from '../core/config.js?v=40000';
-import { prefetchFile } from '../core/fileApi.js?v=40000';
-import { navigate } from '../router.js?v=40000';
+import { BASE_PATH, IS_LOCAL } from '../core/config.js?v=41000';
+import { prefetchFile } from '../core/fileApi.js?v=41000';
+import { navigate } from '../router.js?v=41000';
 
 const PREMIUM_GRADIENTS = [
   'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',

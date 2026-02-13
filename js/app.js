@@ -1,8 +1,8 @@
 // Migrated to use new layered modules
-import { initRouter, navigate } from './router.js?v=40000';
-import { BASE_PATH, IS_LOCAL } from './core/config.js?v=40000';
-import { initTOCToggle } from './toc.js?v=40000';
-import { goToPage } from './dashboard.js?v=40000';
+import { initRouter, navigate } from './router.js?v=41000';
+import { BASE_PATH, IS_LOCAL } from './core/config.js?v=41000';
+import { initTOCToggle } from './toc.js?v=41000';
+import { goToPage } from './dashboard.js?v=41000';
 
 // Expose goToPage to global scope for pagination
 window.goToPage = goToPage;

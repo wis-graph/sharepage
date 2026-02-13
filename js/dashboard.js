@@ -1,5 +1,5 @@
 // Migrated to use new layered modules
-import { fetchFile } from './core/fileApi.js?v=40000';
+import { fetchFile } from './core/fileApi.js?v=41000';
 import {
   setDashboardContent,
   getDashboardContent,
@@ -12,10 +12,10 @@ import {
   getActiveTags,
   addActiveTag,
   removeActiveTag
-} from './state/appState.js?v=40000';
-import { loadSectionedDashboard } from './dashboard/dashboardDataExtractor.js?v=40000';
-import { renderSectionedDashboard, renderDashboardControls } from './dashboard/dashboardCardRenderer.js?v=40000';
-import { initDashboardAnimations } from './animations.js?v=40000';
+} from './state/appState.js?v=41000';
+import { loadSectionedDashboard } from './dashboard/dashboardDataExtractor.js?v=41000';
+import { renderSectionedDashboard, renderDashboardControls } from './dashboard/dashboardCardRenderer.js?v=41000';
+import { initDashboardAnimations } from './animations.js?v=41000';
 
 export async function loadDashboardNotes() {
   console.log('[Dashboard] Initializing dashboard content...');

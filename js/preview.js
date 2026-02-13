@@ -1,7 +1,7 @@
 // Migrated to use new layered modules
-import { fetchFile } from './core/fileApi.js?v=40000';
-import { getRawUrl } from './services/pathService.js?v=40000';
-import { parseFrontmatter } from './services/markdownService.js?v=40000';
+import { fetchFile } from './core/fileApi.js?v=41000';
+import { getRawUrl } from './services/pathService.js?v=41000';
+import { parseFrontmatter } from './services/markdownService.js?v=41000';
 
 let previewTimeout = null;
 let currentPreview = null;

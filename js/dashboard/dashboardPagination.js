@@ -1,5 +1,5 @@
 // Migrated to use new layered modules
-import { PAGINATION } from '../core/config.js?v=40000';
+import { PAGINATION } from '../core/config.js?v=41000';
 const PAGINATION_ITEMS_PER_PAGE = PAGINATION.ITEMS_PER_PAGE;
 
 export function renderPagination(page, totalPages) {

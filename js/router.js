@@ -1,17 +1,17 @@
 // Migrated to use new layered modules
-import { BASE_PATH, IS_LOCAL } from './core/config.js?v=40000';
-import { fetchFile } from './core/fileApi.js?v=40000';
-import { parseNotePath, getNotePath, getRawUrl } from './services/pathService.js?v=40000';
-import { transformInternalLinks, transformObsidianImageLinks, parseFrontmatter } from './services/markdownService.js?v=40000';
-import { createTagTicker } from './tag-ticker.js?v=40000';
-import { applySyntaxHighlighting, renderMermaidDiagrams, protectMath, restoreMath, normalizeMermaidAliases, transformYouTubeLinks } from './renderer.js?v=40000';
-import { loadDashboardNotes, renderDashboardPage } from './dashboard.js?v=40000';
-import { addHeadingIds, renderTOC, initScrollHighlight, stopScrollHighlight } from './toc.js?v=40000';
-import { initImageViewer } from './image-viewer.js?v=40000';
-import { initCodeUtils } from './code-utils.js?v=40000';
-import { initLinkPreviews } from './preview.js?v=40000';
-import { transformCallouts } from './callouts.js?v=40000';
-import { initScrollAnimations, cleanupScrollAnimations, initDashboardAnimations, cleanupDashboardAnimations } from './animations.js?v=40000';
+import { BASE_PATH, IS_LOCAL } from './core/config.js?v=41000';
+import { fetchFile } from './core/fileApi.js?v=41000';
+import { parseNotePath, getNotePath, getRawUrl } from './services/pathService.js?v=41000';
+import { transformInternalLinks, transformObsidianImageLinks, parseFrontmatter } from './services/markdownService.js?v=41000';
+import { createTagTicker } from './tag-ticker.js?v=41000';
+import { applySyntaxHighlighting, renderMermaidDiagrams, protectMath, restoreMath, normalizeMermaidAliases, transformYouTubeLinks } from './renderer.js?v=41000';
+import { loadDashboardNotes, renderDashboardPage } from './dashboard.js?v=41000';
+import { addHeadingIds, renderTOC, initScrollHighlight, stopScrollHighlight } from './toc.js?v=41000';
+import { initImageViewer } from './image-viewer.js?v=41000';
+import { initCodeUtils } from './code-utils.js?v=41000';
+import { initLinkPreviews } from './preview.js?v=41000';
+import { transformCallouts } from './callouts.js?v=41000';
+import { initScrollAnimations, cleanupScrollAnimations, initDashboardAnimations, cleanupDashboardAnimations } from './animations.js?v=41000';
 
 /**
  * Main navigation entry point

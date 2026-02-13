@@ -1,5 +1,5 @@
 // Migrated to use new layered modules
-import { slugify } from './services/markdownService.js?v=40000';
+import { slugify } from './services/markdownService.js?v=41000';
 
 console.log('[TOC] Module loaded');
 

@@ -46,8 +46,31 @@ function generateStaticHtml(template, mdFilename) {
     let description = data.description || data.summary || '';
 
     if (!description) {
-        // Extract first 150 chars from body
-        description = body.replace(/[#*`_\[\]]/g, '').trim().substring(0, 150).replace(/\n/g, ' ') + '...';
+        // Extract first 150 chars from body, removing all markdown syntax
+        description = body
+            .replace(/\*\*(.+?)\*\*/g, '$1')  // Bold: **text** -> text
+            .replace(/\*(.+?)\*/g, '$1')      // Italic: *text* -> text
+            .replace(/__(.+?)__/g, '$1')      // Bold: __text__ -> text
+            .replace(/_(.+?)_/g, '$1')        // Italic: _text_ -> text
+            .replace(/~~(.+?)~~/g, '$1')      // Strikethrough: ~~text~~ -> text
+            .replace(/`(.+?)`/g, '$1')        // Inline code: `text` -> text
+            .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')  // Links: [text](url) -> text
+            .replace(/[#*`_\[\]]/g, '')       // Remove remaining markdown chars
+            .trim()
+            .substring(0, 150)
+            .replace(/\n/g, ' ') + '...';
+    } else {
+        // Also clean frontmatter description
+        description = description
+            .replace(/\*\*(.+?)\*\*/g, '$1')
+            .replace(/\*(.+?)\*/g, '$1')
+            .replace(/__(.+?)__/g, '$1')
+            .replace(/_(.+?)_/g, '$1')
+            .replace(/~~(.+?)~~/g, '$1')
+            .replace(/`(.+?)`/g, '$1')
+            .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
+            .replace(/[#*`_\[\]]/g, '')
+            .trim();
     }
 
     // Handle thumbnail

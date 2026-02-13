@@ -4,6 +4,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    // Dynamic Base Path for Single Page Application Deep Linking
+    (function () {
+      const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+      if (!isLocal) {
+        // On GitHub Pages, detecting the repository name from the path
+        const parts = window.location.pathname.split('/');
+        // parts[1] is usually the repo name (e.g., "sharepage")
+        if (parts[1] && !['index.html', '404.html', 'posts'].includes(parts[1])) {
+          document.write('<base href="/' + parts[1] + '/">');
+        } else {
+          document.write('<base href="/">');
+        }
+      } else {
+        document.write('<base href="/">');
+      }
+    })();
+  </script>
   <title>SharePage</title>
   <meta name="description" content="Share your Obsidian notes with the world using SharePage.">
 

@@ -1,5 +1,4 @@
 // Migrated to use new layered modules
-import { getRawUrl } from './utils.js?v=40000';
 import { BASE_PATH, IS_LOCAL } from './core/config.js?v=40000';
 import { fetchFile } from './core/fileApi.js?v=40000';
 import { parseNotePath, getNotePath } from './services/pathService.js?v=40000';

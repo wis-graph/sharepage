@@ -1,4 +1,6 @@
-import { PAGINATION_ITEMS_PER_PAGE } from '../utils.js?v=40000';
+// Migrated to use new layered modules
+import { PAGINATION } from '../core/config.js?v=40000';
+const PAGINATION_ITEMS_PER_PAGE = PAGINATION.ITEMS_PER_PAGE;
 
 export function renderPagination(page, totalPages) {
   console.log('[Dashboard] Rendering pagination for page', page, 'of', totalPages);

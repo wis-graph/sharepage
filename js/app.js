@@ -1,5 +1,6 @@
-import { navigate, initRouter } from './router.js?v=40000';
-import { BASE_PATH, IS_LOCAL } from './utils.js?v=40000';
+// Migrated to use new layered modules
+import { initRouter } from './router.js?v=40000';
+import { BASE_PATH, IS_LOCAL } from './core/config.js?v=40000';
 import { initTOCToggle } from './toc.js?v=40000';
 import { goToPage } from './dashboard.js?v=40000';
 

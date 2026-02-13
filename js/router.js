@@ -1,7 +1,7 @@
 // Migrated to use new layered modules
 import { BASE_PATH, IS_LOCAL } from './core/config.js?v=40000';
 import { fetchFile } from './core/fileApi.js?v=40000';
-import { parseNotePath, getNotePath } from './services/pathService.js?v=40000';
+import { parseNotePath, getNotePath, getRawUrl } from './services/pathService.js?v=40000';
 import { transformInternalLinks, transformObsidianImageLinks, parseFrontmatter } from './services/markdownService.js?v=40000';
 import { createTagTicker } from './tag-ticker.js?v=40000';
 import { applySyntaxHighlighting, renderMermaidDiagrams, protectMath, restoreMath, normalizeMermaidAliases, transformYouTubeLinks } from './renderer.js?v=40000';

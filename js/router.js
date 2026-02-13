@@ -1,13 +1,13 @@
-import { fetchFile, transformObsidianImageLinks, transformInternalLinks, parseFrontmatter, getRawUrl, BASE_PATH, IS_LOCAL } from './utils.js?v=36000';
-import { createTagTicker } from './tag-ticker.js?v=36000';
-import { applySyntaxHighlighting, renderMermaidDiagrams, protectMath, restoreMath, normalizeMermaidAliases, transformYouTubeLinks } from './renderer.js?v=36000';
-import { loadDashboardNotes, renderDashboardPage } from './dashboard.js?v=36000';
-import { addHeadingIds, renderTOC, initScrollHighlight, stopScrollHighlight } from './toc.js?v=36000';
-import { initImageViewer } from './image-viewer.js?v=36000';
-import { initCodeUtils } from './code-utils.js?v=36000';
-import { initLinkPreviews } from './preview.js?v=36000';
-import { transformCallouts } from './callouts.js?v=36000';
-import { initScrollAnimations, cleanupScrollAnimations, initDashboardAnimations, cleanupDashboardAnimations } from './animations.js?v=36000';
+import { fetchFile, transformObsidianImageLinks, transformInternalLinks, parseFrontmatter, getRawUrl, BASE_PATH, IS_LOCAL, parseNotePath } from './utils.js?v=37000';
+import { createTagTicker } from './tag-ticker.js?v=37000';
+import { applySyntaxHighlighting, renderMermaidDiagrams, protectMath, restoreMath, normalizeMermaidAliases, transformYouTubeLinks } from './renderer.js?v=37000';
+import { loadDashboardNotes, renderDashboardPage } from './dashboard.js?v=37000';
+import { addHeadingIds, renderTOC, initScrollHighlight, stopScrollHighlight } from './toc.js?v=37000';
+import { initImageViewer } from './image-viewer.js?v=37000';
+import { initCodeUtils } from './code-utils.js?v=37000';
+import { initLinkPreviews } from './preview.js?v=37000';
+import { transformCallouts } from './callouts.js?v=37000';
+import { initScrollAnimations, cleanupScrollAnimations, initDashboardAnimations, cleanupDashboardAnimations } from './animations.js?v=37000';
 
 /**
  * Main navigation entry point
@@ -38,15 +38,17 @@ export async function navigate(rawPath) {
   if (normalizedPath === '' || normalizedPath === '/') {
     await handleDashboardRoute();
   } else {
-    // Strip leading slash to get filename
-    let filename = decodeURIComponent(normalizedPath.slice(1));
+    // Use centralized path parser
+    const noteName = parseNotePath(normalizedPath);
 
-    // Handle posts/ prefix: /posts/NoteName -> NoteName
-    if (filename.startsWith('posts/')) {
-      filename = filename.slice(6); // Remove 'posts/'
+    if (noteName) {
+      // It's a note path (posts/NoteName)
+      await handleDocumentRoute(noteName);
+    } else {
+      // Fallback: treat as direct note name (backward compatibility)
+      const filename = decodeURIComponent(normalizedPath.slice(1));
+      await handleDocumentRoute(filename);
     }
-
-    await handleDocumentRoute(filename);
   }
 }
 

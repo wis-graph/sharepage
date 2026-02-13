@@ -8,6 +8,60 @@ export const BASE_PATH = (() => {
 })();
 export const PAGINATION_ITEMS_PER_PAGE = 9;
 
+/**
+ * Centralized Path Management
+ * All URL/path generation should use these functions for consistency
+ */
+
+// Path prefix for all note routes (both SPA and static HTML)
+const NOTE_PATH_PREFIX = 'posts';
+
+/**
+ * Get the SPA route path for a note
+ * @param {string} noteName - Note name without .md extension (e.g., "welcome", "My Note")
+ * @returns {string} - Full path for navigation (e.g., "/posts/welcome", "/sharepage/posts/My Note")
+ */
+export function getNotePath(noteName) {
+  const cleanName = noteName.replace(/\.md$/, '');
+  return (BASE_PATH || '') + '/' + NOTE_PATH_PREFIX + '/' + cleanName;
+}
+
+/**
+ * Get the markdown file path for a note
+ * @param {string} noteName - Note name with or without .md extension
+ * @returns {string} - File path (e.g., "notes/welcome.md")
+ */
+export function getNoteFile(noteName) {
+  const cleanName = noteName.replace(/\.md$/, '');
+  return 'notes/' + cleanName + '.md';
+}
+
+/**
+ * Parse a URL path to extract the note name
+ * @param {string} urlPath - URL path (e.g., "/posts/welcome", "/sharepage/posts/My Note")
+ * @returns {string|null} - Note name or null if not a note path
+ */
+export function parseNotePath(urlPath) {
+  // Remove BASE_PATH if present
+  let path = urlPath;
+  if (BASE_PATH && path.startsWith(BASE_PATH)) {
+    path = path.slice(BASE_PATH.length);
+  }
+
+  // Remove leading slash
+  if (path.startsWith('/')) path = path.slice(1);
+
+  // Remove .html extension if present
+  if (path.endsWith('.html')) path = path.slice(0, -5);
+
+  // Check if it starts with posts/
+  if (path.startsWith(NOTE_PATH_PREFIX + '/')) {
+    return path.slice(NOTE_PATH_PREFIX.length + 1); // Remove "posts/"
+  }
+
+  return null;
+}
+
 export function getRawUrl(filename) {
   if (filename.startsWith('http')) return filename;
 
@@ -96,13 +150,13 @@ export function transformInternalLinks(html) {
         const [page, heading] = linkTarget.split('#');
         const sluggifiedHeading = slugify(heading);
         const noteName = page.replace(/\.md$/, '');
-        const path = (BASE_PATH || '') + '/posts/' + noteName;
+        const path = getNotePath(noteName);
         const text = linkAlias || (page + ' > ' + heading);
         return `<a href="${path}#${sluggifiedHeading}" class="internal-link">${text}</a>`;
       } else {
         // Normal page link
         const noteName = linkTarget.replace(/\.md$/, '');
-        const path = (BASE_PATH || '') + '/posts/' + noteName;
+        const path = getNotePath(noteName);
         const text = linkAlias || noteName;
         return `<a href="${path}" class="internal-link">${text}</a>`;
       }

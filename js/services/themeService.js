@@ -3,7 +3,7 @@
  * Handles theme state and persistence
  */
 
-import { setTheme, getTheme } from '../state/appState.js?v=1771079848881';
+import { setTheme, getTheme } from '../state/appState.js?v=1771082694499';
 
 /**
  * Initializes the theme from local storage or default

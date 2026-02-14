@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "GitHub Pages based Obsidian document renderer",
   "scripts": {
-    "build:css": "cat css/{vars,vars-tokens,base,layout,components,content,toc,responsive}.css > css/bundle.css",
+    "build:css": "cat css/vars.css css/vars-tokens.css css/base.css css/layout.css css/components.css css/content.css css/markdown-features.css css/toc.css css/responsive.css css/image-viewer.css css/code-utils.css css/callouts.css css/animations.css > css/bundle.css",
     "build:css:watch": "onchange 'css/*.css' -- npm run build:css",
     "dev": "npm run build:css:watch",
     "sync": "node scripts/sync.js"

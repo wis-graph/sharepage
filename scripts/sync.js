@@ -205,7 +205,21 @@ function sync() {
         return;
     }
 
-    const template = fs.readFileSync(TEMPLATE_PATH, 'utf8');
+    // 1. Generate new version string (Cache Busting)
+    const newVersion = `v=${Date.now()}`;
+    let template = fs.readFileSync(TEMPLATE_PATH, 'utf8');
+
+    // 2. Update version in index.html for next time and consistency
+    template = template.replace(/\?v=\d+/g, `?${newVersion}`);
+    fs.writeFileSync(TEMPLATE_PATH, template);
+    console.log(`[Sync] Updated index.html with version: ${newVersion}`);
+
+    // 3. Generate 404.html from updated index.html (Point 1 of Audit)
+    const path404 = path.join(ROOT_DIR, '404.html');
+    fs.writeFileSync(path404, template);
+    console.log(`[Sync] Synchronized 404.html from index.html`);
+
+    // 4. Generate Post files
     const files = fs.readdirSync(NOTES_DIR);
     const mdFiles = files.filter(f => f.endsWith('.md') && !f.startsWith('_'));
 

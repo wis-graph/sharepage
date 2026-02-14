@@ -176,8 +176,29 @@ function parseTags(value, existingTags = []) {
 /**
  * Extract inline tags (#tag) from content, excluding code blocks
  */
-function extractInlineTags(content) {
+export function extractInlineTags(content) {
     const contentForTags = content.replace(/```[\s\S]*?```/g, '');
     const inlineTagsMatch = contentForTags.matchAll(/(?:^|\s)#([^\s!@#$%^&*(),.?":{}|<>]+)/g);
     return Array.from(inlineTagsMatch).map(m => m[1]);
+}
+
+/**
+ * Strips obsidian links and markdown formatting to get plain text
+ */
+export function cleanPlainText(text) {
+    if (!text) return '';
+
+    return text
+        // 1. Handle Obsidian links: [[Page Name|Alias]] -> Alias, [[Page Name]] -> Page Name
+        .replace(/\[\[([^\]|]+)\|([^\]]+)\]\]/g, '$2')
+        .replace(/\[\[([^\]]+)\]\]/g, '$1')
+        // 2. Handle Markdown links: [Text](URL) -> Text
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+        // 3. Handle Bold/Italic/Strikethrough/Code
+        .replace(/(\*\*|__|~~|`)(.*?)\1/g, '$2')
+        .replace(/(\*|_)(.*?)\1/g, '$2')
+        // 4. Remove residual symbols like # at start or [] leftover
+        .replace(/[#*`_~\[\]]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
 }

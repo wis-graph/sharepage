@@ -5,15 +5,15 @@ const utils = {
     cleanMetadataText: (text) => {
         if (!text) return '';
         return text
-            .replace(/\*\*(.+?)\*\*/g, '$1')
-            .replace(/\*(.+?)\*/g, '$1')
-            .replace(/__(.+?)__/g, '$1')
-            .replace(/_(.+?)_/g, '$1')
-            .replace(/~~(.+?)~~/g, '$1')
-            .replace(/`(.+?)`/g, '$1')
+            // 1. Handle Obsidian links: [[Page Name|Alias]] -> Alias, [[Page Name]] -> Page Name
+            .replace(/\[\[([^\]|]+)\|([^\]]+)\]\]/g, '$2')
+            .replace(/\[\[([^\]]+)\]\]/g, '$1')
+            // 2. Formatting cleanup
+            .replace(/(\*\*|__|~~|`)(.*?)\1/g, '$2')
+            .replace(/(\*|_)(.*?)\1/g, '$2')
             .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
-            .replace(/[#*`_\[\]]/g, '')
-            .replace(/\n/g, ' ')
+            .replace(/[#*`_~\[\]]/g, '')
+            .replace(/\s+/g, ' ')
             .trim();
     },
 

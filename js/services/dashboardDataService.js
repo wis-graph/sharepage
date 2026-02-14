@@ -5,7 +5,7 @@
 
 import { fetchFile } from '../core/fileApi.js?v=1771070652413';
 import { getNotePath, getRawUrl } from './pathService.js?v=1771070652413';
-import { parseFrontmatter } from './markdownService.js?v=1771070652413';
+import { parseFrontmatter, cleanPlainText } from './markdownService.js?v=1771070652413';
 
 /**
  * Extracts links grouped by sections based on ## Headings
@@ -64,12 +64,12 @@ function extractMetadata(markdown, filename) {
             contentWithoutFrontmatter.match(/^(?!\s*$|#+\s).+/m);
 
         if (firstParagraph) {
-            description = firstParagraph[1]
-                .replace(/[#*`_\[\]]/g, '')
-                .trim()
-                .substring(0, 150);
+            description = firstParagraph[1];
         }
     }
+
+    // Always clean the description text
+    description = cleanPlainText(description).substring(0, 150);
 
     return {
         title: title.charAt(0).toUpperCase() + title.slice(1),

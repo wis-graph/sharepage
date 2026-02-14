@@ -6,7 +6,15 @@ const ROOT_DIR = path.join(__dirname, '..');
 const TEMPLATE_PATH = path.join(ROOT_DIR, 'src', 'index.html');
 const NOTES_DIR = path.join(ROOT_DIR, 'notes');
 const POSTS_DIR = path.join(ROOT_DIR, 'posts');
-const DOMAIN = 'https://wis-graph.github.io/sharepage';
+
+// Dynamic Domain Detection
+const GITHUB_REPOSITORY = process.env.GITHUB_REPOSITORY || 'wis-graph/sharepage';
+const [owner, repo] = GITHUB_REPOSITORY.split('/');
+const DOMAIN = repo.toLowerCase() === `${owner.toLowerCase()}.github.io`
+    ? `https://${owner.toLowerCase()}.github.io`
+    : `https://${owner.toLowerCase()}.github.io/${repo}`;
+
+console.log(`[Sync] Target Domain: ${DOMAIN}`);
 
 // Load Processors
 const processors = {
@@ -129,9 +137,16 @@ function sync() {
     fs.writeFileSync(path.join(ROOT_DIR, '404.html'), dashboardHtml);
     console.log(`[Sync] Synchronized 404.html`);
 
-    // 4. Generate post files
+    // 4. Generate post files (Sorted by mtime descending - Newest first)
     const files = fs.readdirSync(NOTES_DIR);
-    const mdFiles = files.filter(f => f.endsWith('.md') && !f.startsWith('_'));
+    const mdFiles = files
+        .filter(f => f.endsWith('.md') && !f.startsWith('_'))
+        .map(f => ({
+            name: f,
+            time: fs.statSync(path.join(NOTES_DIR, f)).mtime.getTime()
+        }))
+        .sort((a, b) => b.time - a.time)
+        .map(f => f.name);
 
     mdFiles.forEach(file => {
         generateStaticHtml(template, file);
@@ -139,7 +154,7 @@ function sync() {
 
     const indexData = JSON.stringify(mdFiles, null, 2);
     fs.writeFileSync(path.join(POSTS_DIR, 'file_index.json'), indexData);
-    console.log(`[Sync] Completed. ${mdFiles.length} files processed with modular processors.`);
+    console.log(`[Sync] Completed. ${mdFiles.length} files processed (Sorted by date).`);
 }
 
 sync();

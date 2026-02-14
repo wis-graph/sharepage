@@ -26,7 +26,9 @@ export async function loadDashboardNotes() {
  * Filters dashboard sections based on query and active tags
  */
 export function filterSections(sections, query, activeTags) {
-    if (!query && (!activeTags || activeTags.length === 0)) return sections;
+    if (!query && (!activeTags || activeTags.length === 0)) {
+        return sections.filter(section => section.notes.length > 0);
+    }
 
     const lowerQuery = query ? query.toLowerCase() : '';
     const activeTagsSet = new Set(activeTags || []);

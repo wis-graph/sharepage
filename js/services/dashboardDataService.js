@@ -189,11 +189,13 @@ export async function loadSectionedDashboard(dashboardContent) {
 
         validNotes.forEach(n => processedNotes.add(n.file));
 
-        result.push({
-            title: section.title,
-            notes: validNotes,
-            count: validNotes.length
-        });
+        if (validNotes.length > 0) {
+            result.push({
+                title: section.title,
+                notes: validNotes,
+                count: validNotes.length
+            });
+        }
     }
 
     // 3. Auto-discovery for unlisted files

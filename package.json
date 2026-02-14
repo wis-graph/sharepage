@@ -1,5 +1,5 @@
 {
-  "name": "sharehub",
+  "name": "sharepage",
   "version": "1.0.0",
   "description": "GitHub Pages based Obsidian document renderer",
   "scripts": {

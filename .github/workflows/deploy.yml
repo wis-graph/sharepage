@@ -5,8 +5,9 @@ on:
     branches:
       - main
     paths:
-      - '**.md'
+      - 'notes/**/*.md'
       - 'src/index.html'
+      - 'scripts/sync.js'
 
 jobs:
   build:
@@ -33,7 +34,7 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add index.html 404.html posts/*.html css/bundle.css
+          git add index.html 404.html posts/*.html posts/file_index.json css/bundle.css
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else

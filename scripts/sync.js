@@ -137,7 +137,29 @@ function sync() {
     fs.writeFileSync(path.join(ROOT_DIR, '404.html'), dashboardHtml);
     console.log(`[Sync] Synchronized 404.html`);
 
-    // 4. Generate post files (Sorted by mtime descending - Newest first)
+    // 4. Update versions in all JS files (Recursive)
+    const JS_DIR = path.join(ROOT_DIR, 'js');
+    function updateJsVersions(dir) {
+        if (!fs.existsSync(dir)) return;
+        const files = fs.readdirSync(dir);
+        files.forEach(file => {
+            const fullPath = path.join(dir, file);
+            if (fs.statSync(fullPath).isDirectory()) {
+                updateJsVersions(fullPath);
+            } else if (file.endsWith('.js')) {
+                let content = fs.readFileSync(fullPath, 'utf8');
+                const originalContent = content;
+                content = content.replace(/\?v=[^\s"']+/g, `?${newVersion}`);
+                if (content !== originalContent) {
+                    fs.writeFileSync(fullPath, content);
+                    console.log(`[Sync] Bumped version in: js/.../${file}`);
+                }
+            }
+        });
+    }
+    updateJsVersions(JS_DIR);
+
+    // 5. Generate post files (Sorted by mtime descending - Newest first)
     const files = fs.readdirSync(NOTES_DIR);
     const mdFiles = files
         .filter(f => f.endsWith('.md') && !f.startsWith('_'))

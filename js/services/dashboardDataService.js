@@ -118,7 +118,7 @@ function extractThumbnail(content, metadata) {
 /**
  * Enriches a link with metadata and thumbnail
  */
-export async function extractNoteFromLink(link) {
+export async function extractNoteFromLink(link, sortOrder = []) {
     const filename = link.endsWith('.md') ? link : link + '.md';
     const note = {
         file: filename,
@@ -127,8 +127,19 @@ export async function extractNoteFromLink(link) {
 
     try {
         const content = await fetchFile(note.file);
+        const { data } = parseFrontmatter(content);
         const metadata = extractMetadata(content, note.file);
         const thumbnail = extractThumbnail(content, metadata);
+
+        // Try to get a sortable date
+        let sortDate = 0;
+        if (data.date) {
+            sortDate = new Date(data.date).getTime();
+        } else if (sortOrder.indexOf(filename) !== -1) {
+            // Use the index in the file_index as a backup (it's already sorted by mtime in sync.js)
+            // Smaller index means newer, so we invert it
+            sortDate = sortOrder.length - sortOrder.indexOf(filename);
+        }
 
         return {
             ...note,
@@ -137,6 +148,8 @@ export async function extractNoteFromLink(link) {
             thumbnail: thumbnail,
             tags: metadata.tags || [],
             type: metadata.type,
+            date: data.date || null,
+            sortDate: sortDate,
             path: getNotePath(note.file.replace(/\.md$/, ''))
         };
     } catch (error) {
@@ -149,14 +162,30 @@ export async function extractNoteFromLink(link) {
  * Loads all notes including auto-discovered ones
  */
 export async function loadSectionedDashboard(dashboardContent) {
+    // 1. Fetch file index for sorting backup and auto-discovery
+    let allFiles = [];
+    try {
+        const indexUrl = './posts/file_index.json?v=' + Date.now();
+        const response = await fetch(indexUrl);
+        if (response.ok) {
+            allFiles = await response.json();
+        }
+    } catch (e) {
+        console.warn('[DashboardDataService] Could not fetch file_index.json');
+    }
+
     const structuredLinks = extractSectionedLinks(dashboardContent);
     const result = [];
     const processedNotes = new Set();
 
+    // 2. Load structured sections
     for (const section of structuredLinks) {
-        const notePromises = section.links.map(link => extractNoteFromLink(link));
+        const notePromises = section.links.map(link => extractNoteFromLink(link, allFiles));
         const notes = await Promise.all(notePromises);
-        const validNotes = notes.filter(n => n !== null);
+        let validNotes = notes.filter(n => n !== null);
+
+        // Sort notes within section by date descending
+        validNotes.sort((a, b) => b.sortDate - a.sortDate);
 
         validNotes.forEach(n => processedNotes.add(n.file));
 
@@ -167,57 +196,53 @@ export async function loadSectionedDashboard(dashboardContent) {
         });
     }
 
-    // Auto-discovery
-    try {
-        const indexUrl = './posts/file_index.json?v=' + Date.now();
-        const response = await fetch(indexUrl);
+    // 3. Auto-discovery for unlisted files
+    if (allFiles.length > 0) {
+        const unlistedFiles = allFiles.filter(f => !processedNotes.has(f));
 
-        if (response.ok) {
-            const allFiles = await response.json();
-            const unlistedFiles = allFiles.filter(f => !processedNotes.has(f));
+        if (unlistedFiles.length > 0) {
+            const unlistedPromises = unlistedFiles.map(file => extractNoteFromLink(file, allFiles));
+            const unlistedNotes = await Promise.all(unlistedPromises);
+            const validUnlisted = unlistedNotes.filter(n => n !== null);
 
-            if (unlistedFiles.length > 0) {
-                const unlistedPromises = unlistedFiles.map(file => extractNoteFromLink(file));
-                const unlistedNotes = await Promise.all(unlistedPromises);
-                const validUnlisted = unlistedNotes.filter(n => n !== null);
+            if (validUnlisted.length > 0) {
+                // Separate YouTube notes from others
+                const youtubeNotes = validUnlisted.filter(n => {
+                    const isYtType = n.type && n.type.toLowerCase() === 'youtube';
+                    const hasYtThumb = n.thumbnail && n.thumbnail.includes('youtube.com/vi/');
+                    return isYtType || hasYtThumb;
+                });
+                const otherNotes = validUnlisted.filter(n => !youtubeNotes.includes(n));
 
-                if (validUnlisted.length > 0) {
-                    // Separate YouTube notes from others
-                    const youtubeNotes = validUnlisted.filter(n => {
-                        const isYtType = n.type && n.type.toLowerCase() === 'youtube';
-                        const hasYtThumb = n.thumbnail && n.thumbnail.includes('youtube.com/vi/');
-                        return isYtType || hasYtThumb;
-                    });
-                    const otherNotes = validUnlisted.filter(n => !youtubeNotes.includes(n));
-
-                    // Add to YouTube section
-                    if (youtubeNotes.length > 0) {
-                        const existingYtSection = result.find(s => s.title === 'YouTube');
-                        if (existingYtSection) {
-                            existingYtSection.notes.push(...youtubeNotes);
-                            existingYtSection.count = existingYtSection.notes.length;
-                        } else {
-                            result.push({
-                                title: 'YouTube',
-                                notes: youtubeNotes,
-                                count: youtubeNotes.length
-                            });
-                        }
-                    }
-
-                    // Add remaining to Others section
-                    if (otherNotes.length > 0) {
+                // Add to YouTube section
+                if (youtubeNotes.length > 0) {
+                    const existingYtSection = result.find(s => s.title === 'YouTube');
+                    if (existingYtSection) {
+                        existingYtSection.notes.push(...youtubeNotes);
+                        // Re-sort YouTube section
+                        existingYtSection.notes.sort((a, b) => b.sortDate - a.sortDate);
+                        existingYtSection.count = existingYtSection.notes.length;
+                    } else {
+                        youtubeNotes.sort((a, b) => b.sortDate - a.sortDate);
                         result.push({
-                            title: 'Others',
-                            notes: otherNotes,
-                            count: otherNotes.length
+                            title: 'YouTube',
+                            notes: youtubeNotes,
+                            count: youtubeNotes.length
                         });
                     }
                 }
+
+                // Add remaining to Others section
+                if (otherNotes.length > 0) {
+                    otherNotes.sort((a, b) => b.sortDate - a.sortDate);
+                    result.push({
+                        title: 'Others',
+                        notes: otherNotes,
+                        count: otherNotes.length
+                    });
+                }
             }
         }
-    } catch (e) {
-        console.error('[DashboardDataService] Auto-discovery failed:', e);
     }
 
     return result;

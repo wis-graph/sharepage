@@ -34,23 +34,40 @@
 
 .dashboard-grid {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: auto;
   gap: 0;
   border: none;
-  padding: 6px;
+  /* Add significant right padding to create a 'peek' area at the end */
+  padding: 6px 10% 20px 6px;
   max-width: 100%;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Custom scrollbar for better visibility of the scroll action */
+.dashboard-grid::-webkit-scrollbar {
+  height: 4px;
+  display: block;
+}
+
+.dashboard-grid::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dashboard-grid::-webkit-scrollbar-thumb {
+  background: var(--color-border-default);
+  border-radius: var(--radius-full);
 }
 
 .note-card {
-  flex: 1 1 300px;
-  /* Flexible width, at least 300px */
-  max-width: 450px;
-  /* Prevent cards from becoming too wide on large screens */
+  flex: 0 0 320px;
+  /* Fixed width to ensure overflow and 'peek' effect */
+  max-width: 320px;
   background-color: var(--color-surface-base);
   border: 3px solid var(--color-border-strong);
   margin-right: -3px;
-  margin-bottom: -3px;
-  /* Overlap borders in wrapping layout */
+  scroll-snap-align: start;
   border-radius: var(--radius-none);
   overflow: hidden;
   cursor: pointer;
@@ -61,26 +78,16 @@
   z-index: 1;
 }
 
-/* Adjust for smaller screens where we might still want horizontal scroll or different behavior */
+/* Mobile adjustments */
 @media (max-width: 768px) {
   .dashboard-grid {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-
-  .dashboard-grid::-webkit-scrollbar {
-    display: none;
+    padding: 6px 40px 10px 6px;
+    /* Sufficient peek on mobile */
   }
 
   .note-card {
-    min-width: 280px;
+    flex: 0 0 280px;
     max-width: 280px;
-    flex: 0 0 auto;
-    scroll-snap-align: start;
-    margin-bottom: 0;
   }
 }
 

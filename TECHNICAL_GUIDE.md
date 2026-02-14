@@ -28,7 +28,15 @@ SharePage는 독특한 하이브리드 방식을 사용합니다.
 - `/posts/*.html`: 각 노트별 SEO 최적화용 개별 HTML 파일.
 - `/posts/file_index.json`: 전체 노트 메타데이터 목록.
 
-## 4. 플레이스홀더 시스템
+## 4. 문서 타입별 프로세서 (`scripts/processors/`)
+SharePage는 문서의 성격에 따라 메타데이터 추출 로직을 가변적으로 적용하는 **전용 프로세서 구조**를 가집니다.
+
+- **작동 원리**: 마크다운의 `type` 또는 `source_type` 필드를 감지하여 적절한 프로세서를 호출합니다.
+- **기본 프로세서 (`standard.js`)**: 가장 범용적인 마크다운 변환 로직을 담당합니다.
+- **특화 프로세서 (예: `youtube.js`)**: 특정 콘텐츠(유튜브 등)에 최적화된 로직(썸네일 자동 추출, 영상 타입 지정 등)을 수행합니다.
+- **확장 방법**: `scripts/processors/` 디렉토리에 새로운 `.js` 파일을 생성하고 `sync.js`의 `processors` 객체에 등록함으로써 손쉽게 새로운 문서 타입을 지원할 수 있습니다.
+
+## 5. 플레이스홀더 시스템
 `src/index.html` 파일은 원본 템플릿으로 사용되며, 다음과 같은 플레이스홀더를 포함합니다.
 - `{{TITLE}}`: 페이지 제목 및 OG 제목.
 - `{{DESCRIPTION}}`: 페이지 설명 및 OG 설명.
@@ -36,12 +44,12 @@ SharePage는 독특한 하이브리드 방식을 사용합니다.
 - `{{PAGE_URL}}`: 해당 페이지의 절대 경로.
 - `{{OG_TYPE}}`: 콘텐츠 타입 (일반 노트: `website`, 유튜브 기반 노트: `video.other`).
 
-## 5. 클라이언트 사이드 렌더링 (JS/CSS)
+## 6. 클라이언트 사이드 렌더링 (JS/CSS)
 - **라우팅 (`js/core/router.js`)**: 브라우저의 전역 경로와 해시를 감시하여 `Dashboard` 모드와 `Document` 모드를 전환합니다.
 - **스타일 (`css/bundle.css`)**: 모든 CSS 파일을 하나로 번들링하여 전송 성능을 극대화합니다.
 - **이미지 처리**: 썸네일이 없을 경우 제목을 기반으로 한 텍스트 썸네일을 동적으로 생성합니다.
 
-## 6. GitHub Actions 배포 흐름 (`deploy.yml`)
+## 7. GitHub Actions 배포 흐름 (`deploy.yml`)
 1.  사용자(또는 플러그인)가 `notes/` 폴더에 마크다운 파일을 푸시함.
 2.  GitHub Actions가 트리거되어 `node scripts/sync.js`를 실행함.
 3.  생성된 HTML 파일들과 `bundle.css`를 다시 `main` 브랜치에 커밋함 (`[skip ci]` 태그 사용).

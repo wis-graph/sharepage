@@ -3,9 +3,9 @@
  * Core routing logic only. Delegates to controllers for specific routes.
  */
 
-import { BASE_PATH } from './config.js?v=1771153053678';
-import { parseNotePath } from '../services/pathService.js?v=1771153053678';
-import { handleDashboardRoute, handleDocumentRoute } from '../controllers/docController.js?v=1771153053678';
+import { BASE_PATH } from './config.js?v=1771153124260';
+import { parseNotePath } from '../services/pathService.js?v=1771153124260';
+import { handleDashboardRoute, handleDocumentRoute } from '../controllers/docController.js?v=1771153124260';
 
 /**
  * Main navigation entry point

@@ -1,5 +1,5 @@
 ---
-title: Dynamic Rendering Test 2
+title: Dynamic Rendering Test 4
 description: testtesttest
 date: 2026-02-15
 tags: [test, dynamic]

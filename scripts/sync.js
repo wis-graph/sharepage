@@ -95,7 +95,7 @@ function generateStaticHtml(template, mdFilename) {
     const result = processor.process(data, body, mdFilename);
     const normalizedName = mdFilename.replace(/\.md$/, '').normalize('NFC');
     const cleanName = encodeURIComponent(normalizedName);
-    const pageUrl = `${DOMAIN}/posts/${cleanName}/`;
+    const pageUrl = `${DOMAIN}/posts/${cleanName}.html`;
 
     // Apply to template
     const staticHtml = applyMetadataToTemplate(template, {
@@ -103,11 +103,9 @@ function generateStaticHtml(template, mdFilename) {
         pageUrl
     });
 
-    const dirPath = path.join(POSTS_DIR, normalizedName);
-    if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath, { recursive: true });
-
-    fs.writeFileSync(path.join(dirPath, 'index.html'), staticHtml);
-    console.log(`[Sync] Generated (${docType}): posts/${normalizedName}/index.html`);
+    const fileName = `${normalizedName}.html`;
+    fs.writeFileSync(path.join(POSTS_DIR, fileName), staticHtml);
+    console.log(`[Sync] Generated (${docType}): posts/${fileName}`);
 }
 
 /**

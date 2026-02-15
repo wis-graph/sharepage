@@ -3,7 +3,7 @@
  * Handles code block enhancements: copy buttons, mermaid actions, and lightbox integration
  */
 
-import { openLightbox } from './imageViewer.js?v=1771153327349';
+import { openLightbox } from './imageViewer.js?v=1771153446417';
 
 /**
  * Initializes code-related UI features

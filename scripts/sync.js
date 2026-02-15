@@ -159,7 +159,7 @@ function sync() {
     }
     updateJsVersions(JS_DIR);
 
-    // 5. Generate post files (Sorted by mtime descending - Newest first)
+    // 5. Generate file list (Sorted by mtime descending - Newest first)
     const files = fs.readdirSync(NOTES_DIR);
     const mdFiles = files
         .filter(f => f.endsWith('.md') && !f.startsWith('_'))
@@ -170,6 +170,46 @@ function sync() {
         .sort((a, b) => b.time - a.time)
         .map(f => f.name);
 
+    // 6. Automatic Dashboard Link Management
+    const DASHBOARD_PATH = path.join(NOTES_DIR, '_dashboard.md');
+    if (fs.existsSync(DASHBOARD_PATH)) {
+        let dashboardContent = fs.readFileSync(DASHBOARD_PATH, 'utf8');
+        const lines = dashboardContent.split('\n');
+
+        // Find existing links
+        const existingLinks = new Set();
+        dashboardContent.match(/\[\[([^\]]+)\]\]/g)?.forEach(match => {
+            let link = match.slice(2, -2);
+            if (link.includes('|')) link = link.split('|')[0];
+            existingLinks.add(link.trim().replace(/\.md$/, ''));
+        });
+
+        const newLinks = mdFiles
+            .map(f => f.replace(/\.md$/, ''))
+            .filter(name => !existingLinks.has(name));
+
+        if (newLinks.length > 0) {
+            console.log(`[Sync] Found ${newLinks.length} unlinked files. Adding to Inbox...`);
+
+            const today = new Date().toISOString().split('T')[0];
+            const newLinkLines = newLinks.map(name => `- [[${name}]] ${today}`);
+
+            // Check if ## Inbox section exists
+            const inboxIdx = lines.findIndex(line => line.trim() === '## Inbox');
+            if (inboxIdx !== -1) {
+                // Add after the heading
+                lines.splice(inboxIdx + 1, 0, ...newLinkLines);
+            } else {
+                // Add new ## Inbox section at the end
+                lines.push('', '## Inbox', ...newLinkLines);
+            }
+
+            fs.writeFileSync(DASHBOARD_PATH, lines.join('\n'));
+            console.log(`[Sync] Updated _dashboard.md with new links.`);
+        }
+    }
+
+    // 7. Generate post files
     mdFiles.forEach(file => {
         generateStaticHtml(template, file);
     });

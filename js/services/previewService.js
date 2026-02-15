@@ -3,9 +3,9 @@
  * Handles metadata extraction from markdown files for link previews
  */
 
-import { fetchFile } from '../core/fileApi.js?v=1771153748296';
-import { getRawUrl } from './pathService.js?v=1771153748296';
-import { parseFrontmatter } from './markdownService.js?v=1771153748296';
+import { fetchFile } from '../core/fileApi.js?v=1771154293083';
+import { getRawUrl } from './pathService.js?v=1771154293083';
+import { parseFrontmatter } from './markdownService.js?v=1771154293083';
 
 /**
  * Fetches and extracts preview data for a given note path

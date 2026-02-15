@@ -60,7 +60,8 @@ function applyMetadataToTemplate(template, metadata) {
         '{{DESCRIPTION}}': (description || '').replace(/"/g, '&quot;'),
         '{{PAGE_URL}}': pageUrl || DOMAIN,
         '{{OG_IMAGE}}': ogImage || (DOMAIN + '/images/logo.png'),
-        '{{OG_TYPE}}': ogType || 'website'
+        '{{OG_TYPE}}': ogType || 'website',
+        '{{DOMAIN}}': DOMAIN
     };
 
     // Ensure absolute URL for local images
@@ -92,7 +93,8 @@ function generateStaticHtml(template, mdFilename) {
 
     // Process metadata
     const result = processor.process(data, body, mdFilename);
-    const pageUrl = `${DOMAIN}/posts/${encodeURIComponent(mdFilename.replace(/\.md$/, ''))}`;
+    const cleanName = encodeURIComponent(mdFilename.replace(/\.md$/, ''));
+    const pageUrl = `${DOMAIN}/posts/${cleanName}/`;
 
     // Apply to template
     const staticHtml = applyMetadataToTemplate(template, {
@@ -100,9 +102,11 @@ function generateStaticHtml(template, mdFilename) {
         pageUrl
     });
 
-    const fileName = mdFilename.replace(/\.md$/, '.html');
-    fs.writeFileSync(path.join(POSTS_DIR, fileName), staticHtml);
-    console.log(`[Sync] Generated (${docType}): posts/${fileName}`);
+    const dirPath = path.join(POSTS_DIR, mdFilename.replace(/\.md$/, ''));
+    if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath, { recursive: true });
+
+    fs.writeFileSync(path.join(dirPath, 'index.html'), staticHtml);
+    console.log(`[Sync] Generated (${docType}): posts/${mdFilename.replace(/\.md$/, '')}/index.html`);
 }
 
 /**

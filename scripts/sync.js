@@ -174,19 +174,35 @@ function sync() {
     const DASHBOARD_PATH = path.join(NOTES_DIR, '_dashboard.md');
     if (fs.existsSync(DASHBOARD_PATH)) {
         let dashboardContent = fs.readFileSync(DASHBOARD_PATH, 'utf8');
-        const lines = dashboardContent.split('\n');
+        let currentLines = dashboardContent.split('\n');
 
-        // Find existing links
+        // Find existing links and valid files
         const existingLinks = new Set();
+        const validFileNames = new Set(mdFiles.map(f => f.replace(/\.md$/, '')));
+
         dashboardContent.match(/\[\[([^\]]+)\]\]/g)?.forEach(match => {
             let link = match.slice(2, -2);
             if (link.includes('|')) link = link.split('|')[0];
             existingLinks.add(link.trim().replace(/\.md$/, ''));
         });
 
-        const newLinks = mdFiles
-            .map(f => f.replace(/\.md$/, ''))
-            .filter(name => !existingLinks.has(name));
+        // Identify and remove dead links from the lines
+        const deadLinks = Array.from(existingLinks).filter(link => !validFileNames.has(link));
+        if (deadLinks.length > 0) {
+            console.log(`[Sync] Found ${deadLinks.length} dead links. Cleaning up: ${deadLinks.join(', ')}`);
+            currentLines = currentLines.filter(line => {
+                const linkMatch = line.match(/\[\[([^\]]+)\]\]/);
+                if (linkMatch) {
+                    let link = linkMatch[1];
+                    if (link.includes('|')) link = link.split('|')[0];
+                    const cleanLink = link.trim().replace(/\.md$/, '');
+                    return !deadLinks.includes(cleanLink);
+                }
+                return true;
+            });
+        }
+
+        const newLinks = Array.from(validFileNames).filter(name => !existingLinks.has(name));
 
         if (newLinks.length > 0) {
             console.log(`[Sync] Found ${newLinks.length} unlinked files. Adding to Inbox...`);
@@ -195,17 +211,19 @@ function sync() {
             const newLinkLines = newLinks.map(name => `- [[${name}]] ${today}`);
 
             // Check if ## Inbox section exists
-            const inboxIdx = lines.findIndex(line => line.trim() === '## Inbox');
+            const inboxIdx = currentLines.findIndex(line => line.trim() === '## Inbox');
             if (inboxIdx !== -1) {
                 // Add after the heading
-                lines.splice(inboxIdx + 1, 0, ...newLinkLines);
+                currentLines.splice(inboxIdx + 1, 0, ...newLinkLines);
             } else {
                 // Add new ## Inbox section at the end
-                lines.push('', '## Inbox', ...newLinkLines);
+                currentLines.push('', '## Inbox', ...newLinkLines);
             }
+        }
 
-            fs.writeFileSync(DASHBOARD_PATH, lines.join('\n'));
-            console.log(`[Sync] Updated _dashboard.md with new links.`);
+        if (deadLinks.length > 0 || newLinks.length > 0) {
+            fs.writeFileSync(DASHBOARD_PATH, currentLines.join('\n'));
+            console.log(`[Sync] Updated _dashboard.md (Inbox: +${newLinks.length}, Dead: -${deadLinks.length}).`);
         }
     }
 

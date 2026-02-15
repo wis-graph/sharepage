@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const core = require('./core-logic');
 
 // Constants
 const ROOT_DIR = path.join(__dirname, '..');
@@ -25,67 +26,12 @@ const processors = {
 if (!fs.existsSync(POSTS_DIR)) fs.mkdirSync(POSTS_DIR);
 
 /**
- * Basic Frontmatter Parser
- */
-function parseFrontmatter(content) {
-    const frontmatterRegex = /^---\r?\n([\s\S]*?)\r?\n---/;
-    const match = content.match(frontmatterRegex);
-    const data = {};
-    let body = content;
-
-    if (match) {
-        body = content.replace(frontmatterRegex, '').trim();
-        const yaml = match[1];
-        yaml.split('\n').forEach(line => {
-            const parts = line.split(':');
-            if (parts.length >= 2) {
-                const key = parts[0].trim();
-                const value = parts.slice(1).join(':').trim().replace(/^['"](.*)['"]$/, '$1');
-                data[key] = value;
-            }
-        });
-    }
-
-    return { data, body };
-}
-
-/**
- * Inject metatags and title into template using placeholders
- */
-function applyMetadataToTemplate(template, metadata) {
-    const { title, description, pageUrl, ogImage, ogType } = metadata;
-
-    const replacements = {
-        '{{TITLE}}': title || 'SharePage',
-        '{{DESCRIPTION}}': (description || '').replace(/"/g, '&quot;'),
-        '{{PAGE_URL}}': pageUrl || DOMAIN,
-        '{{OG_IMAGE}}': ogImage || (DOMAIN + '/images/logo.png'),
-        '{{OG_TYPE}}': ogType || 'website',
-        '{{DOMAIN}}': DOMAIN
-    };
-
-    // Ensure absolute URL for local images
-    if (replacements['{{OG_IMAGE}}'] && !replacements['{{OG_IMAGE}}'].startsWith('http')) {
-        let imgPath = replacements['{{OG_IMAGE}}'];
-        if (imgPath.startsWith('/')) imgPath = imgPath.substring(1);
-        replacements['{{OG_IMAGE}}'] = `${DOMAIN}/${imgPath}`;
-    }
-
-    let html = template;
-    for (const [placeholder, value] of Object.entries(replacements)) {
-        html = html.split(placeholder).join(value);
-    }
-
-    return html;
-}
-
-/**
  * Generate Static HTML for a single markdown file
  */
 function generateStaticHtml(template, mdFilename) {
     const fullPath = path.join(NOTES_DIR, mdFilename);
     const content = fs.readFileSync(fullPath, 'utf8');
-    const { data, body } = parseFrontmatter(content);
+    const { data, body } = core.parseFrontmatter(content);
 
     // Select processor based on frontmatter type
     const docType = (data.type || data.source_type || 'standard').toLowerCase();
@@ -93,19 +39,28 @@ function generateStaticHtml(template, mdFilename) {
 
     // Process metadata
     const result = processor.process(data, body, mdFilename);
-    const normalizedName = mdFilename.replace(/\.md$/, '').normalize('NFC');
+    const normalizedName = core.normalizeName(mdFilename.replace(/\.md$/, ''));
     const cleanName = encodeURIComponent(normalizedName);
     const pageUrl = `${DOMAIN}/posts/${cleanName}.html`;
 
     // Apply to template
-    const staticHtml = applyMetadataToTemplate(template, {
+    const staticHtml = core.applyMetadataToTemplate(template, {
         ...result,
         pageUrl
-    });
+    }, DOMAIN);
 
     const fileName = `${normalizedName}.html`;
     fs.writeFileSync(path.join(POSTS_DIR, fileName), staticHtml);
     console.log(`[Sync] Generated (${docType}): posts/${fileName}`);
+}
+
+
+
+/**
+ * Inject metatags and title into template using placeholders
+ */
+function applyMetadataToTemplate(template, metadata) {
+    return core.applyMetadataToTemplate(template, metadata, DOMAIN);
 }
 
 /**
@@ -181,12 +136,12 @@ function sync() {
 
         // Find existing links and valid files
         const existingLinks = new Set();
-        const validFileNames = new Set(mdFiles.map(f => f.replace(/\.md$/, '')));
+        const validFileNames = new Set(mdFiles.map(f => core.normalizeName(f.replace(/\.md$/, ''))));
 
         dashboardContent.match(/\[\[([^\]]+)\]\]/g)?.forEach(match => {
             let link = match.slice(2, -2);
             if (link.includes('|')) link = link.split('|')[0];
-            existingLinks.add(link.trim().replace(/\.md$/, ''));
+            existingLinks.add(core.normalizeName(link.trim().replace(/\.md$/, '')));
         });
 
         // Identify and remove dead links from the lines
@@ -198,7 +153,7 @@ function sync() {
                 if (linkMatch) {
                     let link = linkMatch[1];
                     if (link.includes('|')) link = link.split('|')[0];
-                    const cleanLink = link.trim().replace(/\.md$/, '');
+                    const cleanLink = core.normalizeName(link.trim().replace(/\.md$/, ''));
                     return !deadLinks.includes(cleanLink);
                 }
                 return true;
@@ -211,17 +166,10 @@ function sync() {
             console.log(`[Sync] Found ${newLinks.length} unlinked files. Adding to Inbox...`);
 
             const today = new Date().toISOString().split('T')[0];
-            const newLinkLines = newLinks.map(name => `- [[${name}]] ${today}`);
-
-            // Check if ## Inbox section exists
-            const inboxIdx = currentLines.findIndex(line => line.trim() === '## Inbox');
-            if (inboxIdx !== -1) {
-                // Add after the heading
-                currentLines.splice(inboxIdx + 1, 0, ...newLinkLines);
-            } else {
-                // Add new ## Inbox section at the end
-                currentLines.push('', '## Inbox', ...newLinkLines);
-            }
+            newLinks.forEach(name => {
+                dashboardContent = core.updateDashboardContent(dashboardContent, name, today, true);
+            });
+            currentLines = dashboardContent.split('\n');
         }
 
         if (deadLinks.length > 0 || newLinks.length > 0) {

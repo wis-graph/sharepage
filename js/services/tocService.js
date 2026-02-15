@@ -3,7 +3,7 @@
  * Handles heading extraction and ID generation for Table of Contents
  */
 
-import { slugify } from './markdownService.js?v=1771155027170';
+import { slugify } from './markdownService.js?v=1771157493150';
 
 /**
  * Adds IDs to headings in HTML and wraps them for anchor linking

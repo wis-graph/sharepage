@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.1.6] - 2026-02-15
+### Added
+- **Plugin Infrastructure**: Added `scripts/core-logic.js` for standalone logic reuse in Obsidian plugins without requiring full repository clones.
+- **OG Stability**: Switched to a flat `.html` file structure in `posts/` for 100% compatibility with KakaoTalk/SNS crawlers (resolves 301 redirect issues).
+- **Dashboard Intelligence**: Automatic management of `_dashboard.md`.
+  - Automatically adds unlinked notes to the `## Inbox` section.
+  - Automatically cleans up dead links from the dashboard when files are deleted.
+- **Korean OS Support**: Forced NFC (Normalization Form C) for all filenames to fix encoding mismatches between macOS (NFD) and GitHub/SNS Crawlers.
+
+### Optimized
+- **GitHub Actions**: 
+  - Implementation of deployment concurrency to cancel redundant runs.
+  - Faster builds by removing unnecessary dependency installs.
+- **Absolute Paths**: All critical assets and OG meta tags now use absolute URLs linked to the target domain for better indexability.
+
+### Fixed
+- **Dashboard Interactivity**: Fixed broken search and tag filtering event handlers.
+- **Path Resolution**: Resolved issues where Korean filenames caused 404s on certain scrapers.
+
 ## [1.1.0] - 2026-02-15
 ### Added
 - Content Management: Delete uploaded notes directly from Obsidian settings.

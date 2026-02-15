@@ -3,9 +3,9 @@
  * Handles extracting and processing data for the dashboard
  */
 
-import { fetchFile } from '../core/fileApi.js?v=1771152047525';
-import { getNotePath, getRawUrl } from './pathService.js?v=1771152047525';
-import { parseFrontmatter, cleanPlainText } from './markdownService.js?v=1771152047525';
+import { fetchFile } from '../core/fileApi.js?v=1771152090760';
+import { getNotePath, getRawUrl } from './pathService.js?v=1771152090760';
+import { parseFrontmatter, cleanPlainText } from './markdownService.js?v=1771152090760';
 
 /**
  * Extracts links grouped by sections based on ## Headings
@@ -126,11 +126,9 @@ function extractThumbnail(content, metadata) {
 /**
  * Enriches a link with metadata and thumbnail
  */
-export async function extractNoteFromLink(link, sortOrder = []) {
-    const linkName = (typeof link === 'object' && link !== null) ? link.name : link;
-
+export async function extractNoteFromLink(linkName, sortOrder = [], manualDate = null) {
     if (!linkName || typeof linkName !== 'string') {
-        console.warn('[DashboardDataService] Invalid link ignored:', link);
+        console.warn('[DashboardDataService] Invalid linkName ignored:', linkName);
         return null;
     }
 
@@ -148,8 +146,6 @@ export async function extractNoteFromLink(link, sortOrder = []) {
 
         // Try to get a sortable date
         let sortDate = 0;
-        const manualDate = typeof link === 'object' ? link.date : null;
-
         if (manualDate) {
             sortDate = new Date(manualDate).getTime();
         } else if (data.date) {
@@ -166,7 +162,7 @@ export async function extractNoteFromLink(link, sortOrder = []) {
             thumbnail: thumbnail,
             tags: metadata.tags || [],
             type: metadata.type,
-            date: data.date || null,
+            date: manualDate || data.date || null,
             sortDate: sortDate,
             path: getNotePath(note.file.replace(/\.md$/, ''))
         };
@@ -200,8 +196,7 @@ export async function loadSectionedDashboard(dashboardContent) {
     // 2. Load structured sections
     for (const section of structuredLinks) {
         const notePromises = section.links.map(linkInfo => {
-            const linkName = typeof linkInfo === 'object' ? linkInfo.name : linkInfo;
-            return extractNoteFromLink(linkInfo, allFiles);
+            return extractNoteFromLink(linkInfo.name, allFiles, linkInfo.date);
         });
         const notes = await Promise.all(notePromises);
         let validNotes = notes.filter(n => n !== null);

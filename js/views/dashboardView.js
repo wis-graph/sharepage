@@ -11,33 +11,25 @@ import {
     getAllTags,
     getActiveTags,
     getSearchQuery
-} from '../state/appState.js?v=1771154293083';
-import { loadSectionedDashboard } from '../services/dashboardDataService.js?v=1771154293083';
-import { renderSectionedDashboard, renderDashboardControls } from './dashboardCardView.js?v=1771154293083';
-import { filterSections } from '../services/dashboardService.js?v=1771154293083';
+} from '../state/appState.js?v=1771154494809';
+import { loadSectionedDashboard } from '../services/dashboardDataService.js?v=1771154494809';
+import { renderSectionedDashboard, renderDashboardControls } from './dashboardCardView.js?v=1771154494809';
+import { filterSections } from '../services/dashboardService.js?v=1771154494809';
 
 /**
  * Renders the structured dashboard view
  */
 export async function renderDashboardPage() {
-    console.log('[DashboardView] Rendering dashboard page START');
-
     const dashboardContent = getDashboardContent();
     if (!dashboardContent) {
         return '<div class="loading">No content found in _dashboard.md. Please create it to organize your notes.</div>';
     }
 
     const sections = await loadSectionedDashboard(dashboardContent);
-    console.log('[DashboardView] Loaded sections from data service:', sections);
 
     if (sections.length === 0) {
         return '<div class="loading">No notes linked in _dashboard.md yet.</div>';
     }
-
-    // Debug: Log all notes that are about to be rendered
-    sections.forEach(s => {
-        console.log(`[DashboardView] Section "${s.title}" notes:`, s.notes.map(n => n.title));
-    });
 
     // Extract all unique tags
     const allTags = new Set();
@@ -50,8 +42,6 @@ export async function renderDashboardPage() {
     // Update State
     setDashboardSections(sections);
     setAllTags(Array.from(allTags).sort());
-
-    console.log('[DashboardView] Final state preparation complete. Rendering...');
 
     return renderFullDashboard();
 }

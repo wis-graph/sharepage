@@ -3,8 +3,8 @@
  * Handles data fetching and filtering for the dashboard
  */
 
-import { fetchFile } from '../core/fileApi.js?v=1771154293083';
-import { setDashboardContent } from '../state/appState.js?v=1771154293083';
+import { fetchFile } from '../core/fileApi.js?v=1771154494809';
+import { setDashboardContent } from '../state/appState.js?v=1771154494809';
 
 /**
  * Loads the dashboard markdown file
@@ -14,9 +14,7 @@ export async function loadDashboardNotes() {
 
     try {
         const content = await fetchFile('_dashboard.md');
-        console.log('[DashboardService] Raw _dashboard.md content:', content);
         setDashboardContent(content);
-        console.log('[DashboardService] _dashboard.md loaded into state');
     } catch (error) {
         console.error('[DashboardService] Error loading _dashboard.md:', error);
         setDashboardContent('');

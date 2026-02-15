@@ -3,9 +3,9 @@
  * Handles theme-related UI updates and user interactions
  */
 
-import { getTheme } from '../state/appState.js?v=1771152090760';
-import { initThemeState, saveTheme, configureMermaid } from '../services/themeService.js?v=1771152090760';
-import { applyThemeToBody, updateThemeIcon } from '../views/themeView.js?v=1771152090760';
+import { getTheme } from '../state/appState.js?v=1771152270454';
+import { initThemeState, saveTheme, configureMermaid } from '../services/themeService.js?v=1771152270454';
+import { applyThemeToBody, updateThemeIcon } from '../views/themeView.js?v=1771152270454';
 
 /**
  * Initializes the theme UI and state

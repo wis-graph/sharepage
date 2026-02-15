@@ -3,8 +3,8 @@
  * Handles data fetching and filtering for the dashboard
  */
 
-import { fetchFile } from '../core/fileApi.js?v=1771152090760';
-import { setDashboardContent } from '../state/appState.js?v=1771152090760';
+import { fetchFile } from '../core/fileApi.js?v=1771152270454';
+import { setDashboardContent } from '../state/appState.js?v=1771152270454';
 
 /**
  * Loads the dashboard markdown file

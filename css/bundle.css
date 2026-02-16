@@ -163,7 +163,8 @@ body {
   gap: var(--space-1);
 }
 
-.theme-toggle {
+.theme-toggle,
+.navbar-btn {
   padding: 8px var(--space-2);
   background-color: var(--color-surface-muted);
   color: var(--color-text-body);
@@ -175,14 +176,21 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: opacity 0.2s;
+  transition: all 0.2s ease;
 }
 
-.theme-toggle:hover {
+.theme-toggle:hover,
+.navbar-btn:hover {
   opacity: 0.8;
 }
 
-.theme-toggle svg {
+.navbar-btn.copied {
+  background-color: var(--color-accent-primary);
+  color: #ffffff;
+}
+
+.theme-toggle svg,
+.navbar-btn svg {
   stroke: currentColor;
 }
 

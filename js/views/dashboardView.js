@@ -11,10 +11,10 @@ import {
     getAllTags,
     getActiveTags,
     getSearchQuery
-} from '../state/appState.js?v=1771157965897';
-import { loadSectionedDashboard } from '../services/dashboardDataService.js?v=1771157965897';
-import { renderSectionedDashboard, renderDashboardControls } from './dashboardCardView.js?v=1771157965897';
-import { filterSections } from '../services/dashboardService.js?v=1771157965897';
+} from '../state/appState.js?v=1771231049308';
+import { loadSectionedDashboard } from '../services/dashboardDataService.js?v=1771231049308';
+import { renderSectionedDashboard, renderDashboardControls } from './dashboardCardView.js?v=1771231049308';
+import { filterSections } from '../services/dashboardService.js?v=1771231049308';
 
 /**
  * Renders the structured dashboard view

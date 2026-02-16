@@ -3,8 +3,8 @@
  * Handles rendering of note cards, grids, and dashboard controls
  */
 
-import { prefetchFile } from '../core/fileApi.js?v=1771252927293';
-import { navigate } from '../core/router.js?v=1771252927293';
+import { prefetchFile } from '../core/fileApi.js?v=1771259473751';
+import { navigate } from '../core/router.js?v=1771259473751';
 
 const PREMIUM_GRADIENTS = [
   'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',

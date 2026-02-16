@@ -3,10 +3,10 @@
  * Main entry point for application initialization
  */
 
-import { initRouter, navigate } from '../core/router.js?v=1771252927293';
-import { BASE_PATH } from '../core/config.js?v=1771252927293';
-import { initTOCToggle } from '../views/tocView.js?v=1771252927293';
-import { initTheme, toggleTheme } from './themeController.js?v=1771252927293';
+import { initRouter, navigate } from '../core/router.js?v=1771259473751';
+import { BASE_PATH } from '../core/config.js?v=1771259473751';
+import { initTOCToggle } from '../views/tocView.js?v=1771259473751';
+import { initTheme, toggleTheme } from './themeController.js?v=1771259473751';
 
 /**
  * Initializes the entire application
@@ -26,12 +26,35 @@ export function initializeApp() {
     // 4. Initialize Core Modules
     initRouter();
     initTOCToggle();
+    initShareButton();
 
     // 5. Update UI elements
     updateNavbar();
 
     // 6. Initial Routing
     handleInitialRoute();
+}
+
+/**
+ * Initializes the share button logic
+ */
+function initShareButton() {
+    const shareBtn = document.getElementById('share-btn');
+    if (!shareBtn) return;
+
+    shareBtn.addEventListener('click', () => {
+        // decodeURIComponent prevents Korean characters from being %-encoded in clipboard
+        const cleanUrl = decodeURIComponent(window.location.href);
+
+        navigator.clipboard.writeText(cleanUrl).then(() => {
+            shareBtn.classList.add('copied');
+            setTimeout(() => {
+                shareBtn.classList.remove('copied');
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy URL:', err);
+        });
+    });
 }
 
 /**

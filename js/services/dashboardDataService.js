@@ -3,9 +3,9 @@
  * Handles extracting and processing data for the dashboard
  */
 
-import { fetchFile } from '../core/fileApi.js?v=1771252927293';
-import { getNotePath, getRawUrl } from './pathService.js?v=1771252927293';
-import { parseFrontmatter, cleanPlainText } from './markdownService.js?v=1771252927293';
+import { fetchFile } from '../core/fileApi.js?v=1771259473751';
+import { getNotePath, getRawUrl } from './pathService.js?v=1771259473751';
+import { parseFrontmatter, cleanPlainText } from './markdownService.js?v=1771259473751';
 
 /**
  * Extracts links grouped by sections based on ## Headings

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.8] - 2026-02-17
+### Added
+- **Share Link Feature**: Added a "Share" button to the navbar that copies the current page's URL to the clipboard.
+  - Automatically **decodes Korean characters** (unencoded) in the URL for better readability when sharing.
+  - Provides visual feedback (button color change) upon successful copying.
+  - Supports both dashboard and individual document pages.
+
 ## [1.1.7] - 2026-02-16
 ### Added
 - **Internal Link Infrastructure**: Robust handling of Obsidian same-page heading links (`[[#Heading]]`) and cross-page heading links (`[[Note#Heading]]`).

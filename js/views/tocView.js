@@ -3,7 +3,7 @@
  * Handles rendering of the Table of Contents and scroll highlighting
  */
 
-import { extractTOC } from '../services/tocService.js?v=1771260024669';
+import { extractTOC } from '../services/tocService.js?v=1771260300867';
 
 const tocState = {
     currentScrollObserver: null

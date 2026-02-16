@@ -54,33 +54,69 @@
 
 .theme-toggle,
 .navbar-btn {
+  position: relative;
   padding: 8px var(--space-2);
   background-color: var(--color-surface-muted);
   color: var(--color-text-body);
   border: none;
   cursor: pointer;
   border-radius: var(--radius-none);
+  /* Back to Sharp Design */
   font-size: var(--text-heading-4);
   font-weight: 500;
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .theme-toggle:hover,
 .navbar-btn:hover {
-  opacity: 0.8;
+  background-color: var(--color-border-default);
+  transform: translateY(-1px);
 }
 
 .navbar-btn.copied {
   background-color: var(--color-accent-primary);
   color: #ffffff;
+  transform: scale(0.95);
+}
+
+/* Premium Tooltip Animation */
+.navbar-btn::after {
+  content: 'Link Copied!';
+  position: absolute;
+  top: -45px;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background-color: var(--color-text-primary);
+  color: var(--color-surface-base);
+  padding: 6px 12px;
+  border-radius: var(--radius-none);
+  /* Sharp Tooltip */
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.navbar-btn.copied::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
 }
 
 .theme-toggle svg,
 .navbar-btn svg {
   stroke: currentColor;
+  transition: transform 0.3s ease;
+}
+
+.navbar-btn.copied svg {
+  transform: rotate(360deg);
 }
 
 /* Main Layout */

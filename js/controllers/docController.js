@@ -3,17 +3,17 @@
  * Coordinates document loading, processing, and rendering
  */
 
-import { fetchFile } from '../core/fileApi.js?v=1771260024669';
-import { processDocument } from '../services/docService.js?v=1771260024669';
-import { renderDocumentView, renderError, renderLoading, prepareLayout } from '../views/docView.js?v=1771260024669';
-import { initImageViewer } from '../views/imageViewer.js?v=1771260024669';
-import { initCodeUtils } from '../views/codeView.js?v=1771260024669';
-import { initLinkPreviews } from '../views/previewView.js?v=1771260024669';
-import { renderTOC, initScrollHighlight } from '../views/tocView.js?v=1771260024669';
-import { initScrollAnimations, cleanupScrollAnimations, initDashboardAnimations } from '../views/animations.js?v=1771260024669';
-import { loadDashboardNotes } from '../services/dashboardService.js?v=1771260024669';
-import { renderDashboardPage } from '../views/dashboardView.js?v=1771260024669';
-import { initDashboardHandlers } from './dashboardController.js?v=1771260024669';
+import { fetchFile } from '../core/fileApi.js?v=1771260300867';
+import { processDocument } from '../services/docService.js?v=1771260300867';
+import { renderDocumentView, renderError, renderLoading, prepareLayout } from '../views/docView.js?v=1771260300867';
+import { initImageViewer } from '../views/imageViewer.js?v=1771260300867';
+import { initCodeUtils } from '../views/codeView.js?v=1771260300867';
+import { initLinkPreviews } from '../views/previewView.js?v=1771260300867';
+import { renderTOC, initScrollHighlight } from '../views/tocView.js?v=1771260300867';
+import { initScrollAnimations, cleanupScrollAnimations, initDashboardAnimations } from '../views/animations.js?v=1771260300867';
+import { loadDashboardNotes } from '../services/dashboardService.js?v=1771260300867';
+import { renderDashboardPage } from '../views/dashboardView.js?v=1771260300867';
+import { initDashboardHandlers } from './dashboardController.js?v=1771260300867';
 
 /**
  * Handles individual document route logic

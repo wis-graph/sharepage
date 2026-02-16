@@ -2014,4 +2014,27 @@ body.theme-dark {
         transform: none;
         transition: none;
     }
-}
+}/*
+ * Custom CSS for SharePage
+ * 
+ * 이 파일에 작성된 스타일은 SharePage 템플릿 업데이트 시에도 덮어쓰여지지 않고 유지됩니다.
+ * 기본 스타일을 덮어쓰거나 새로운 디자인을 추가하고 싶을 때 사용하세요.
+ * 
+ * 사용 예시:
+ * 
+ * /* 배경색 변경 */
+*
+/*
+ * body {
+ *     background-color: #f0f0f0;
+ * }
+ * */
+* *
+/* 코드 블록 폰트 변경 */
+*
+/*
+ * code {
+ *     font-family: 'D2Coding', monospace;
+ * }
+ * */
+*/

@@ -3,7 +3,7 @@
  * Initializes the application after DOM is ready
  */
 
-import { initializeApp } from './controllers/appController.js?v=1771235562801';
+import { initializeApp } from './controllers/appController.js?v=1771249886853';
 
 document.addEventListener('DOMContentLoaded', () => {
   // Check for critical libraries

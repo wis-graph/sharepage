@@ -167,7 +167,20 @@ function sync() {
     // 6. Incremental Static HTML Generation
     mdFiles.forEach(file => generateStaticHtml(template, file));
 
-    // 7. Generate Global File Index (Registry)
+    // 7. Cleanup Orphaned HTML files
+    const existingHtmlFiles = fs.readdirSync(POSTS_DIR).filter(f => f.endsWith('.html'));
+    const expectedHtmlNames = new Set(mdFiles.map(f => core.normalizeName(f.replace(/\.md$/, ''))));
+
+    existingHtmlFiles.forEach(htmlFile => {
+        const nameWithoutExt = htmlFile.replace(/\.html$/, '');
+        if (!expectedHtmlNames.has(core.normalizeName(nameWithoutExt))) {
+            const orphanPath = path.join(POSTS_DIR, htmlFile);
+            fs.unlinkSync(orphanPath);
+            console.log(`[Sync] Cleaned orphan: posts/${htmlFile}`);
+        }
+    });
+
+    // 8. Generate Global File Index (Registry)
     const indexData = JSON.stringify(mdFiles, null, 2);
     fs.writeFileSync(path.join(POSTS_DIR, 'file_index.json'), indexData);
 

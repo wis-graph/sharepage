@@ -3,7 +3,7 @@
  * Handles the UI for link hover previews (popups, positioning)
  */
 
-import { getPreviewData } from '../services/previewService.js?v=1771235562801';
+import { getPreviewData } from '../services/previewService.js?v=1771249886853';
 
 let previewTimeout = null;
 let currentPreview = null;

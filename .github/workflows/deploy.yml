@@ -37,6 +37,19 @@ jobs:
           npm run build:css
           node scripts/sync.js
 
+      - name: Commit and Push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          # Add all potentially updated files
+          git add index.html 404.html posts/*.html posts/file_index.json css/bundle.css
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: auto-sync and orphan cleanup [skip ci]"
+            git push
+          fi
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

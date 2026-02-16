@@ -112,7 +112,20 @@ function rebuildAll() {
     // 5. Force Re-generate all post files
     mdFiles.forEach(file => generateStaticHtml(template, file));
 
-    // 6. Refresh Global File Index
+    // 6. Cleanup Orphaned HTML files
+    const existingHtmlFiles = fs.readdirSync(POSTS_DIR).filter(f => f.endsWith('.html'));
+    const expectedHtmlNames = new Set(mdFiles.map(f => core.normalizeName(f.replace(/\.md$/, ''))));
+
+    existingHtmlFiles.forEach(htmlFile => {
+        const nameWithoutExt = htmlFile.replace(/\.html$/, '');
+        if (!expectedHtmlNames.has(core.normalizeName(nameWithoutExt))) {
+            const orphanPath = path.join(POSTS_DIR, htmlFile);
+            fs.unlinkSync(orphanPath);
+            console.log(`[Rebuild] Cleaned orphan: posts/${htmlFile}`);
+        }
+    });
+
+    // 7. Refresh Global File Index
     const indexData = JSON.stringify(mdFiles, null, 2);
     fs.writeFileSync(path.join(POSTS_DIR, 'file_index.json'), indexData);
 

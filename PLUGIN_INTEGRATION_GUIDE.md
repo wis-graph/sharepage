@@ -10,13 +10,28 @@ To minimize deployment delay and ensure consistent social media previews (Open G
 | :--- | :--- |
 | **Obsidian Plugin** | Immediate "Pre-packaging": Generates OG HTML and updates Dashboard before pushing. |
 | **GitHub REST API** | Data Exchange: Handles multi-file commits without full repository clones. |
-| **GitHub Actions** | Background Maintenance: Syncs legacy files, bundles CSS, and triggers final CDN deployment. |
+| **GitHub Actions** | Background Maintenance: Syncs legacy files, bundles CSS, and triggers final CDN deployment. **Orphan Cleanup**: Automatically removes HTML/Dashboard links if Markdown is deleted. |
 
 ---
 
-## 🛠 Shared Logic (`scripts/core-logic.js`)
+## 📂 Core Scripts to Reference
 
-The plugin must mirror the logic in `scripts/core-logic.js` to ensure total consistency.
+Study these files to understand the transformation logic the plugin must implement:
+
+1.  **`scripts/core-logic.js` (The Brain)**: 
+    *   Contains `applyMetadataToTemplate` for HTML generation.
+    *   Contains `updateDashboardContent` for surgical dashboard updates.
+    *   Contains `normalizeName` for critical NFC normalization.
+2.  **`scripts/classifier.js` (The Classifier)**:
+    *   Defines the rules for mapped `type` or `source_type` to dashboard sections (e.g., "YouTube").
+3.  **`scripts/processors/` (Metadata Extractors)**:
+    *   Rules for extracting titles, descriptions, and thumbnails from different markdown types (e.g., YouTube vs Standard).
+
+---
+
+## 🛠 Shared Logic (`scripts/core-logic.js`, `scripts/classifier.js`)
+
+The plugin must mirror the logic in these scripts to ensure total consistency.
 
 ### Key Logic Modules to Implement in Plugin:
 
@@ -53,9 +68,9 @@ To achieve "Instant Share" without waiting for GitHub Actions, the plugin should
 
 ### Step 1: Data Retrieval
 Fetch required context from GitHub via REST API (GET):
-*   `src/index.html` (The template)
-*   `notes/_dashboard.md` (The current index)
-*   (Optional) `package.json` to detect system versions.
+*   `src/index.html` (The template for HTML generation)
+*   `notes/_dashboard.md` (The current index for surgery)
+*   `posts/file_index.json` (The registry of all uploaded notes - use this for listing/management)
 
 ### Step 2: In-Memory Processing
 Do not write to disk. Process everything in memory:
@@ -70,7 +85,14 @@ Use the GitHub REST API to push **all files in a single commit**. This prevents 
     2.  `posts/Your-Note.html` (The OG preview)
     3.  `notes/_dashboard.md` (The updated index)
 
-### Step 4: Deployment Tracking
+### Step 4: Note Removal & Bulk Operations
+To delete notes or perform bulk actions:
+1.  **Listing**: Read `posts/file_index.json` to get the list of shared notes.
+2.  **Removal**: Sending a `DELETE` operation for `notes/Name.md` is sufficient. 
+    *   *Note*: The GitHub Action will automatically clean up the corresponding `posts/Name.html` and `_dashboard.md` links (Orphan Cleanup).
+    *   For absolute instant consistency, you may also delete `posts/Name.html` in the same commit.
+
+### Step 5: Deployment Tracking
 After pushing, poll the GitHub API (`/repos/{owner}/{repo}/pages/deployments`) to track the deployment status.
 1.  Inform the user: "Pushing to GitHub..."
 2.  Inform the user: "Deploying to Web Server (approx. 30s)..."

@@ -3,8 +3,8 @@
  * Handles the transformation from Markdown to HTML
  */
 
-import { parseFrontmatter, transformObsidianImageLinks, transformInternalLinks, slugify } from './markdownService.js?v=1771259473751';
-import { getRawUrl } from './pathService.js?v=1771259473751';
+import { parseFrontmatter, transformObsidianImageLinks, transformInternalLinks, slugify } from './markdownService.js?v=1771259982340';
+import { getRawUrl } from './pathService.js?v=1771259982340';
 import {
     applySyntaxHighlighting,
     renderMermaidDiagrams,
@@ -12,9 +12,9 @@ import {
     restoreMath,
     normalizeMermaidAliases,
     transformYouTubeLinks
-} from './renderService.js?v=1771259473751';
-import { transformCallouts } from './calloutService.js?v=1771259473751';
-import { addHeadingIds } from './tocService.js?v=1771259473751';
+} from './renderService.js?v=1771259982340';
+import { transformCallouts } from './calloutService.js?v=1771259982340';
+import { addHeadingIds } from './tocService.js?v=1771259982340';
 
 /**
  * Core processing pipeline: Markdown -> HTML

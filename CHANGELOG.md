@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0] - 2026-02-17
+### Fixed
+- **Indented Callouts**: Supported callouts nested within lists or blocks with leading whitespace.
+  - Correctly detects `  > [!TYPE]` patterns.
+  - Preserves indentation level to maintain list hierarchy during rendering.
+  - Improved multi-line callout parsing to handle nested markdown more robustly.
+
 ## [1.1.9] - 2026-02-17
 ### Added
 - **Global Toast Notification System**: Replaced localized tooltips with a premium, top-centered notification system.

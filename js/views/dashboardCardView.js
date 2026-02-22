@@ -3,8 +3,8 @@
  * Handles rendering of note cards, grids, and dashboard controls
  */
 
-import { prefetchFile } from '../core/fileApi.js?v=1771730669552';
-import { navigate } from '../core/router.js?v=1771730669552';
+import { prefetchFile } from '../core/fileApi.js?v=1771731611017';
+import { navigate } from '../core/router.js?v=1771731611017';
 
 const PREMIUM_GRADIENTS = [
   'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -57,7 +57,8 @@ export function renderNoteCard(note) {
         ${note.tags.map(tag => `
           <button 
             class="note-card-tag-pill" 
-            onclick="event.stopPropagation(); window.onDashboardTagToggle('${tag}')"
+            data-tag="${tag}"
+            onclick="event.stopPropagation(); window.onDashboardTagToggle(this.dataset.tag)"
           >#${tag}</button>
         `).join('')}
        </div>`
@@ -65,8 +66,10 @@ export function renderNoteCard(note) {
 
   return `
     <div class="note-card" 
-         onclick="window.handleCardClick('${note.path}', this)" 
-         onmouseenter="window.prefetchNote('${note.file}')">
+         data-path="${note.path}"
+         data-file="${note.file}"
+         onclick="window.handleCardClick(this.dataset.path, this)" 
+         onmouseenter="window.prefetchNote(this.dataset.file)">
       ${thumbnailHtml}
       <div class="note-card-content">
         <div class="note-card-title">${note.title}</div>
@@ -107,7 +110,8 @@ export function renderDashboardControls(allTags, activeTags, searchQuery) {
     return `
       <button 
         class="dashboard-tag-filter ${isActive ? 'active' : ''}" 
-        onclick="window.onDashboardTagToggle('${tag}')">
+        data-tag="${tag}"
+        onclick="window.onDashboardTagToggle(this.dataset.tag)">
         #${tag}
       </button>
     `;

@@ -3,10 +3,10 @@
  * Handles rendering the document and updating the DOM
  */
 
-import { BASE_PATH } from '../core/config.js?v=1771730669552';
-import { createTagTicker } from './tagTicker.js?v=1771730669552';
-import { stopScrollHighlight } from './tocView.js?v=1771730669552';
-import { cleanupScrollAnimations, cleanupDashboardAnimations } from './animations.js?v=1771730669552';
+import { BASE_PATH } from '../core/config.js?v=1771731611017';
+import { createTagTicker } from './tagTicker.js?v=1771731611017';
+import { stopScrollHighlight } from './tocView.js?v=1771731611017';
+import { cleanupScrollAnimations, cleanupDashboardAnimations } from './animations.js?v=1771731611017';
 
 /**
  * Updates the DOM with the processed document

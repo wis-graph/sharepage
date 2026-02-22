@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.3.1] - 2026-02-22
+### Fixed
+- **Dashboard Card Click**: Fixed navigation breaking when note titles contain single quotes (').
+  - Changed inline onclick handlers to use `data-*` attributes for safer string handling.
+  - Applied to card paths, file references, and tag filters.
+
 ## [1.3.0] - 2026-02-22
 ### Added
 - **Copy Markdown Button**: Added a button to copy the original markdown source to clipboard.

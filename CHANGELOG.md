@@ -1,6 +1,16 @@
 # Changelog
 
-## [1.3.1] - 2026-02-22
+## [1.4.0] - 2026-02-22
+### Added
+- **Force Rebuild System**: New GitHub Actions workflow for full site regeneration.
+  - `.rebuild` trigger file: Plugin can trigger rebuild by updating this file's timestamp.
+  - `rebuild.yml` workflow: Runs `scripts/rebuild-all.js` when `.rebuild` changes.
+  - Automatically cleans orphan HTML files (no corresponding markdown).
+  - Cache busting across all JS/CSS files.
+- **Plugin Integration Guide**: Added Force Rebuild documentation to both EN/KR guides.
+  - Explains how to add a "Rebuild" button in Obsidian plugin settings.
+  - Includes sample code for triggering rebuild via GitHub API.
+
 ### Fixed
 - **Dashboard Card Click**: Fixed navigation breaking when note titles contain single quotes (').
   - Changed inline onclick handlers to use `data-*` attributes for safer string handling.

@@ -100,6 +100,75 @@ After pushing, poll the GitHub API (`/repos/{owner}/{repo}/pages/deployments`) t
 
 ---
 
+## 🔄 Force Rebuild
+
+### Overview
+A "nuclear option" for when templates change significantly or all HTML files need to be regenerated.
+
+### How It Works
+1.  A `.rebuild` file exists at the repository root.
+2.  When the plugin updates this file's content (timestamp) and pushes, the `rebuild.yml` workflow is triggered.
+3.  GitHub Actions runs `scripts/rebuild-all.js` to force-regenerate all HTML and clean orphan files.
+
+### Plugin Implementation
+
+**1. Add a "Force Rebuild" button in settings**
+```typescript
+// Example (Plugin settings tab)
+new ButtonComponent(containerEl)
+    .setButtonText("Force Rebuild All")
+    .setTooltip("Rebuild all documents from scratch")
+    .onClick(async () => {
+        await this.triggerRebuild();
+    });
+```
+
+**2. Implement the trigger function**
+```typescript
+async function triggerRebuild(): Promise<void> {
+    // 1. Fetch current .rebuild file
+    const response = await octokit.rest.repos.getContent({
+        owner: OWNER,
+        repo: REPO,
+        path: '.rebuild'
+    });
+    
+    // 2. Update with new timestamp
+    const newContent = `last_rebuild: ${new Date().toISOString()}\n`;
+    
+    // 3. Commit & push
+    await octokit.rest.repos.createOrUpdateFileContents({
+        owner: OWNER,
+        repo: REPO,
+        path: '.rebuild',
+        message: 'chore: trigger force rebuild',
+        content: Buffer.from(newContent).toString('base64'),
+        sha: response.data.sha // Existing file SHA required
+    });
+    
+    // 4. Notify user
+    new Notice('Rebuild triggered. Completion takes ~1-2 minutes.');
+}
+```
+
+### What Rebuild Does
+- Iterates through all `notes/*.md` files
+- **Forces** regeneration of `posts/*.html` (no incremental check)
+- Automatically deletes orphan HTML files (no corresponding markdown)
+- Cache busting (applies new timestamps to all JS/CSS)
+- Updates `index.html`, `404.html`, `file_index.json`
+
+### When to Use
+- After major template (`src/index.html`) changes
+- After `js/` or `css/` core file updates
+- When some HTML files are corrupted or missing
+
+### Caution
+- **Don't overuse**: Full rebuild takes time.
+- **Normal uploads**: Regular note uploads are handled incrementally by `deploy.yml`.
+
+---
+
 ## 🤖 Tips for AI Developers
 
 - **No Clone Needed**: Use `Octokit` or native `fetch` with GitHub REST API.

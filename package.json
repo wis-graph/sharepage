@@ -1,6 +1,6 @@
 {
   "name": "sharepage",
-  "version": "1.3.1",
+  "version": "1.4.0",
   "description": "GitHub Pages based Obsidian document renderer",
   "scripts": {
     "build:css": "cat css/vars.css css/vars-tokens.css css/base.css css/layout.css css/components.css css/content.css css/markdown-features.css css/toc.css css/responsive.css css/image-viewer.css css/code-utils.css css/callouts.css css/animations.css css/custom.css > css/bundle.css",

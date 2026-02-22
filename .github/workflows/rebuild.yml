@@ -1,16 +1,11 @@
-name: Auto Pre-render for OG Support
+name: Force Rebuild All
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'notes/**/*.md'
-      - 'src/index.html'
-      - 'scripts/**/*.js'
-      - 'js/**/*.js'
-      - 'css/**/*.css'
-      # Note: .rebuild is excluded - triggers rebuild.yml instead
+      - '.rebuild'
 
 concurrency:
   group: "pages"
@@ -22,7 +17,7 @@ permissions:
   id-token: write
 
 jobs:
-  build:
+  rebuild:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -33,21 +28,20 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Build and Sync
+      - name: Rebuild All
         run: |
           npm run build:css
-          node scripts/sync.js
+          node scripts/rebuild-all.js
 
       - name: Commit and Push changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          # Add all potentially updated files
           git add index.html 404.html posts/*.html posts/file_index.json css/bundle.css
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "chore: auto-sync and orphan cleanup [skip ci]"
+            git commit -m "chore: force rebuild completed [skip ci]"
             git push
           fi
 
@@ -61,7 +55,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: build
+    needs: rebuild
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
